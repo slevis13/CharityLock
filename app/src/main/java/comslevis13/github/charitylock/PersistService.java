@@ -1,95 +1,88 @@
 package comslevis13.github.charitylock;
 
 import android.app.ActivityManager;
+import android.app.ActivityOptions;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
+import android.os.PowerManager;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-/**
- * Created by slevi on 11/27/2017.
- */
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class PersistService extends Service {
 
-    private static final long INTERVAL = TimeUnit.SECONDS.toMillis(2); // periodic interval to check in seconds -> 2 seconds
-    private static final String TAG = PersistService.class.getSimpleName();
-    private static final String PREF_KIOSK_MODE = "pref_kiosk_mode";
+    // poll interval (milliseconds)
+    private static final int INTERVAL = 100;
 
-    private Thread t = null;
-    private Context ctx = null;
-    private boolean running = false;
+    private static boolean stopTask;
 
     @Override
-    public void onDestroy() {
-        Log.i(TAG, "Stopping service 'KioskService'");
-        running =false;
+    public void onCreate() {
+        super.onCreate();
+
+        stopTask = false;
+        startPersistRefresh();
+
+    }
+
+    // launches method to continuously refresh task, i.e. lock user into activity
+    private void startPersistRefresh () {
+        // start polling task
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+
+                // to stop the polling
+                if (stopTask){
+                    this.cancel();
+                }
+
+                // if app not in foreground
+                if (isBackgroundRunning(getApplicationContext())){
+                    // force PersistActivity to top of stack
+                    Intent forceToTop = new Intent(getApplicationContext(), PersistActivity.class);
+                    forceToTop.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                    startActivity(forceToTop);
+                }
+            }
+        };
+        Timer timer = new Timer();
+        timer.scheduleAtFixedRate(task, 0, INTERVAL);
+    }
+
+    // helper, checks if app in background (i.e. not in foreground)
+    private static boolean isBackgroundRunning(Context context) {
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
+
+        for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
+            if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                for (String activeProcess : processInfo.pkgList) {
+                    if (activeProcess.equals(context.getPackageName())) {
+                        // if app is in foreground, then it's not in background
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+
+
+    @Override
+    public void onDestroy(){
+        stopTask = true;
         super.onDestroy();
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.i(TAG, "Starting service 'KioskService'");
-        running = true;
-        ctx = this;
-
-        // start a thread that periodically checks if your app is in the foreground
-        t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                do {
-                    handleKioskMode();
-                    try {
-                        Thread.sleep(INTERVAL);
-                    } catch (InterruptedException e) {
-                        Log.i(TAG, "Thread interrupted: 'KioskService'");
-                    }
-                }while(running);
-                stopSelf();
-            }
-        });
-
-        t.start();
-        return Service.START_NOT_STICKY;
-    }
-
-    private void handleKioskMode() {
-        // is Kiosk Mode active?
-        if(isKioskModeActive(this)) {
-            // is App in background?
-            if(isInBackground()) {
-                restoreApp(); // restore!
-            }
-        }
-    }
-
-    private boolean isInBackground() {
-        ActivityManager am = (ActivityManager) ctx.getSystemService(Context.ACTIVITY_SERVICE);
-
-        List<ActivityManager.RunningTaskInfo> taskInfo = am.getRunningTasks(1);
-        ComponentName componentInfo = taskInfo.get(0).topActivity;
-        return (!ctx.getApplicationContext().getPackageName().equals(componentInfo.getPackageName()));
-    }
-
-    private void restoreApp() {
-        // Restart activity
-        Intent i = new Intent(ctx, PersistActivity.class);
-        i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        ctx.startActivity(i);
-    }
-
-    public boolean isKioskModeActive(final Context context) {
-        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-        return sp.getBoolean(PREF_KIOSK_MODE, false);
-    }
-
+    @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;

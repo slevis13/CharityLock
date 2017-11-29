@@ -5,6 +5,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="suhh" />
+        android:text="suhh"
+        android:id="@+id/time_left_display"/>
 
 </FrameLayout>

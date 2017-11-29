@@ -9,11 +9,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-public class MainActivity extends FragmentActivity
-        implements DialogConfirm.NoticeDialogListener {
+public class MainActivity extends FragmentActivity {
+
+    // TODO: time selector UI
+    // TODO: what happens when device rotates?
+    // TODO: what happens when user gets a phone call, text, other notification?
+    // TODO; if user doesn't have wifi/data? could generate json object, send when wifi detected
+
+    private int timeToLock;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,16 +29,17 @@ public class MainActivity extends FragmentActivity
     }
 
     // gets time from time picker, on 'Done' button click
+    // called onClick in button in activity.main.xml
     @RequiresApi(api = Build.VERSION_CODES.M)
     public void getTime (View view) {
-        TimePicker timePicker = (TimePicker) findViewById(R.id.time_picker);
-        int timePickerHour = timePicker.getHour();
-        int timePickerMinute = timePicker.getMinute();
-
-        launchDialogConfirm(timePickerHour, timePickerMinute);
+        EditText timePicker = (EditText) findViewById(R.id.time_picker);
+        // get input from editText, store in timeToLock
+        timeToLock = Integer.parseInt(timePicker.getText().toString());
+        // launch confirmation dialog
+        launchDialogConfirm();
     }
 
-    public void launchDialogConfirm (int hour, int minute) {
+    private void launchDialogConfirm () {
         DialogConfirm dialogConfirm = new DialogConfirm();
         dialogConfirm.show(getSupportFragmentManager(), "launchDialog");
     }
@@ -39,16 +47,17 @@ public class MainActivity extends FragmentActivity
     // The dialog fragment receives a reference to this Activity through the
     // Fragment.onAttach() callback, which it uses to call the following methods
     // defined by the NoticeDialogFragment.NoticeDialogListener interface
-    @Override
-    public void onDialogPositiveClick(DialogFragment dialog) {
-        // User touched the dialog's positive button
-        TextView displayTime = (TextView) findViewById(R.id.time_display);
-        displayTime.setText("yeet");
 
+    public void onDialogPositiveClick() {
+        // User touched the dialog's positive button
+        // TODO: pass timeToLock to persistactivity
+        Intent intent = new Intent(this, PersistActivity.class);
+        intent.putExtra("time_to_lock", timeToLock);
+        startActivity(intent);
     }
 
-    @Override
-    public void onDialogNegativeClick(DialogFragment dialog) {
+
+    public void onDialogNegativeClick() {
         // User touched the dialog's negative button
 
     }

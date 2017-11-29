@@ -22,7 +22,10 @@
             android:name=".PersistActivity"
             android:parentActivityName=".MainActivity">
         </activity>
+        <service android:name="comslevis13.github.charitylock.PersistService"
+            android:enabled="true"/>
     </application>
+
 
 
 </manifest>
