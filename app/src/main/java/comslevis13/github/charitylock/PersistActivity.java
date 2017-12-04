@@ -102,11 +102,7 @@ public class PersistActivity extends FragmentActivity {
         }.start();
     }
 
-<<<<<<< HEAD
     private void unlockCountDown() {
-=======
-    private void unlockCountDown () {
->>>>>>> cad298f17a038a0782d714b14dcfd9c0469febec
         // stop PersistService (i.e. unlock user from app)
         Intent stopPersistService = new Intent(getApplicationContext(), PersistService.class);
         stopService(stopPersistService);
