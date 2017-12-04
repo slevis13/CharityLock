@@ -28,11 +28,13 @@ public class PersistService extends Service {
 
         stopTask = false;
         startPersistRefresh();
-
     }
 
-    // launches method to continuously refresh task, i.e. lock user into activity
+    // launches method to continuously refresh activity
     private void startPersistRefresh () {
+        // intent to launch PersistActivity
+        final Intent forceToTop = new Intent(getApplicationContext(), PersistActivity.class);
+        forceToTop.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_SINGLE_TOP);
         // start polling task
         TimerTask task = new TimerTask() {
             @Override
@@ -42,38 +44,13 @@ public class PersistService extends Service {
                 if (stopTask){
                     this.cancel();
                 }
-
-                // if app not in foreground
-                if (isBackgroundRunning(getApplicationContext())){
-                    // force PersistActivity to top of stack
-                    Intent forceToTop = new Intent(getApplicationContext(), PersistActivity.class);
-                    forceToTop.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                    startActivity(forceToTop);
-                }
+                // force PersistActivity to foreground
+                startActivity(forceToTop);
             }
         };
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(task, 0, INTERVAL);
     }
-
-    // helper, checks if app in background (i.e. not in foreground)
-    private static boolean isBackgroundRunning(Context context) {
-        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
-
-        for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
-            if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
-                for (String activeProcess : processInfo.pkgList) {
-                    if (activeProcess.equals(context.getPackageName())) {
-                        // if app is in foreground, then it's not in background
-                        return false;
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
 
 
     @Override

@@ -51,7 +51,7 @@ public class PersistActivity extends Activity {
 
     private void startCountDown(long millisUntilFinished, long countDownInterval) {
 
-        // launch persist service -- locks user in app
+        // launch persist service
         Intent persistService = new Intent(this, PersistService.class);
         startService(persistService);
 
@@ -71,7 +71,6 @@ public class PersistActivity extends Activity {
     }
 
     private void unlockCountDown () {
-
         // stop PersistService (i.e. unlock user from app)
         Intent stopPersistService = new Intent(getApplicationContext(), PersistService.class);
         stopService(stopPersistService);
