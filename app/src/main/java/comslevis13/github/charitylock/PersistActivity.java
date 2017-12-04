@@ -13,16 +13,19 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -38,7 +41,7 @@ public class PersistActivity extends FragmentActivity {
     private int COUNTDOWN_INTERVAL = 100;
     private FragmentManager supportFragmentManager;
 
-    private HomeKeyLocker mHomeKeyLocker;
+    HomeKeyLocker mHomeKeyLocker;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -46,6 +49,8 @@ public class PersistActivity extends FragmentActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.persist_activity);
+
+        mHomeKeyLocker = new HomeKeyLocker();
 
         // get passed-in timeToLock from intent
         Intent intent = getIntent();
@@ -61,32 +66,40 @@ public class PersistActivity extends FragmentActivity {
 
     @Override
     protected void onPause() {
-
-        if(!MyActivityLifecycleCallbacks.isAppInForeground()) {
-            Intent forceToTop = new Intent(getApplicationContext(), PersistActivity.class);
-            forceToTop.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(forceToTop);
-        }
+//        if(!MyActivityLifecycleCallbacks.isAppInForeground()) {
+//            Intent forceToTop = new Intent(getApplicationContext(), PersistActivity.class);
+//            forceToTop.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//            startActivity(forceToTop);
+//        }
         super.onPause();
     }
 
     @Override
     protected void onStop() {
-
-        if(!MyActivityLifecycleCallbacks.isAppInForeground()) {
-            Intent forceToTop = new Intent(getApplicationContext(), PersistActivity.class);
-            forceToTop.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(forceToTop);
-        }
+//        if(!MyActivityLifecycleCallbacks.isAppInForeground()) {
+//            Intent forceToTop = new Intent(getApplicationContext(), PersistActivity.class);
+//            forceToTop.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//            startActivity(forceToTop);
+//        }
         super.onStop();
     }
 
     private void startCountDown(long millisUntilFinished, long countDownInterval) {
 
-        // TODO: launcher service start
 
         // launch countdown, display time in textview
         final TextView mTimeDisplay = (TextView) findViewById(R.id.time_left_display);
+
+        // TODO: seems like this is working (not crashing) on API 26. but does not actually lock activity...
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
+                Settings.canDrawOverlays(this)) {
+                mHomeKeyLocker.lock(this);
+        }
+        else {
+            Toast.makeText(getApplicationContext(), "Nah b",
+                    Toast.LENGTH_LONG).show();
+        }
+
 
         new CountDownTimer(millisUntilFinished, countDownInterval) {
             // updates text to show time left onTick

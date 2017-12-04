@@ -18,7 +18,7 @@ import java.util.TimerTask;
 public class PersistService extends Service {
 
     // poll interval (milliseconds)
-    private static final int INTERVAL = 100;
+    private static final int INTERVAL = 10;
 
     private static boolean stopTask;
 

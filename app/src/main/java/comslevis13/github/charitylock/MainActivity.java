@@ -1,17 +1,14 @@
 package comslevis13.github.charitylock;
 
-import android.app.DialogFragment;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.TimePicker;
 
 public class MainActivity extends FragmentActivity {
 
@@ -26,7 +23,21 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Intent permissionIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                Uri.parse("package:" + getPackageName()));
+        startActivityForResult(permissionIntent, 5469);
+
     }
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if(requestCode==5469)
+//        {
+//            setContentView(R.layout.activity_main);
+//        }
+//    }
+
 
     // gets time from time picker, on 'Done' button click
     // called onClick in button in activity.main.xml
@@ -40,8 +51,8 @@ public class MainActivity extends FragmentActivity {
     }
 
     private void launchDialogConfirm () {
-        DialogConfirm dialogConfirm = new DialogConfirm();
-        dialogConfirm.show(getSupportFragmentManager(), "launchDialog");
+        ConfirmLockOut confirmLockOut = new ConfirmLockOut();
+        confirmLockOut.show(getSupportFragmentManager(), "launchDialog");
     }
 
     // The dialog fragment receives a reference to this Activity through the
@@ -54,6 +65,7 @@ public class MainActivity extends FragmentActivity {
         Intent intent = new Intent(this, PersistActivity.class);
         intent.putExtra("time_to_lock", timeToLock);
         startActivity(intent);
+
     }
 
 
