@@ -83,7 +83,9 @@ public class PersistActivity extends FragmentActivity {
 
     private void startCountDown(long millisUntilFinished, long countDownInterval) {
 
-        // TODO: launcher service start
+        // launch persist service
+        Intent persistService = new Intent(this, PersistService.class);
+        startService(persistService);
 
         // launch countdown, display time in textview
         final TextView mTimeDisplay = (TextView) findViewById(R.id.time_left_display);
@@ -102,6 +104,9 @@ public class PersistActivity extends FragmentActivity {
     }
 
     private void unlockCountDown () {
+        // stop PersistService (i.e. unlock user from app)
+        Intent stopPersistService = new Intent(getApplicationContext(), PersistService.class);
+        stopService(stopPersistService);
 
         // bring user back to main screen
         Intent mainActivity = new Intent(getApplicationContext(), MainActivity.class);
