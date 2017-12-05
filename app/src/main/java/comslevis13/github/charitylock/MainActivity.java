@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -20,23 +21,49 @@ public class MainActivity extends FragmentActivity {
     // TODO: what happens when user gets a phone call, text, other notification?
     // TODO; if user doesn't have wifi/data? could generate json object, send when wifi detected
 
-    private int timeToLock;
+    private int hoursToLock;
+    private int minutesToLock;
+
+    private NumberPicker hourPicker;
+    private NumberPicker minutePicker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        hourPicker = (NumberPicker) findViewById(R.id.hourPicker);
+        minutePicker = (NumberPicker) findViewById(R.id.minutePicker);
+        setPickerRanges();
+
+        // listen for button click
+        final Button lockButton = (Button) findViewById(R.id.button_time_picker);
+        lockButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                handleLockButtonClick();
+            }
+        });
     }
 
-    // gets time from time picker, on 'Done' button click
-    // called onClick in button in activity.main.xml
-    @RequiresApi(api = Build.VERSION_CODES.M)
-    public void getTime (View view) {
-        EditText timePicker = (EditText) findViewById(R.id.time_picker);
-        // get input from editText, store in timeToLock
-        timeToLock = Integer.parseInt(timePicker.getText().toString());
-        // launch confirmation dialog
+    // initialize number pickers
+    private void setPickerRanges () {
+        hourPicker.setMinValue(0);
+        hourPicker.setMaxValue(23);
+        minutePicker.setMinValue(0);
+        minutePicker.setMaxValue(59);
+    }
+
+    // get time and launch confirmation dialog
+    private void handleLockButtonClick () {
+        getTime();
         launchDialogConfirm();
+    }
+
+    // get time from time picker
+    private void getTime () {
+        // get input from editText, store in timeToLock
+        hoursToLock = hourPicker.getValue();
+        minutesToLock = minutePicker.getValue();
     }
 
     private void launchDialogConfirm () {
@@ -44,21 +71,18 @@ public class MainActivity extends FragmentActivity {
         dialogConfirm.show(getSupportFragmentManager(), "launchDialog");
     }
 
-    // The dialog fragment receives a reference to this Activity through the
-    // Fragment.onAttach() callback, which it uses to call the following methods
-    // defined by the NoticeDialogFragment.NoticeDialogListener interface
+    // callbacks for dialog button clicks
 
     public void onDialogPositiveClick() {
         // User touched the dialog's positive button
-        // TODO: pass timeToLock to persistactivity
+        // pass hours, minutes to persistactivity
         Intent intent = new Intent(this, PersistActivity.class);
-        intent.putExtra("time_to_lock", timeToLock);
+        intent.putExtra(getString(R.string.dialog_intent_hours), hoursToLock);
+        intent.putExtra(getString(R.string.dialog_intent_minutes), minutesToLock);
         startActivity(intent);
     }
 
-
     public void onDialogNegativeClick() {
         // User touched the dialog's negative button
-
     }
 }

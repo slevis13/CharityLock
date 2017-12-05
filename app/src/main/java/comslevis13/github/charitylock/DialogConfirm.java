@@ -28,14 +28,14 @@ public class DialogConfirm extends android.support.v4.app.DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         return new AlertDialog.Builder(getActivity())
-                .setPositiveButton("YES",
+                .setPositiveButton(getString(R.string.confirm_dialog_yes),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 ((MainActivity)getActivity()).onDialogPositiveClick();
                             }
                         }
                 )
-                .setNegativeButton("Cancel",
+                .setNegativeButton(getString(R.string.confirm_dialog_cancel),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 ((MainActivity)getActivity()).onDialogNegativeClick();

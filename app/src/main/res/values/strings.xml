@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">CharityLock</string>
+    <string name="lock_button">LOCK</string>
+    <string name="confirm_dialog_yes">Lock it!</string>
+    <string name="confirm_dialog_cancel">Cancel</string>
+    <string name="lock_text_view">Time To Lock</string>
+    <string name="text_view_minute_picker">Minutes</string>
+    <string name="text_view_hour_picker">Hours</string>
+
+    <string name="dialog_intent_hours">hours_to_lock</string>
+    <string name="dialog_intent_minutes">minutes_to_lock</string>
 </resources>

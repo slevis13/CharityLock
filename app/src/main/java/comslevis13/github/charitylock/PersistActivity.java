@@ -33,7 +33,8 @@ import java.util.TimerTask;
 
 public class PersistActivity extends FragmentActivity {
 
-    private int timeToLock;
+    private int hoursLocked;
+    private int minutesLocked;
 
     private int COUNTDOWN_INTERVAL = 100;
     private FragmentManager supportFragmentManager;
@@ -47,14 +48,16 @@ public class PersistActivity extends FragmentActivity {
 
         // get passed-in timeToLock from intent
         Intent intent = getIntent();
-        timeToLock = intent.getIntExtra("time_to_lock", 0);
+        hoursLocked = intent.getIntExtra(getString(R.string.dialog_intent_hours), 0);
+        minutesLocked = intent.getIntExtra(getString(R.string.dialog_intent_minutes), 0);
 
-        // generate milliseconds to lock value
-        int secondsToLock = timeToLock * 60;
-        int millsToLock = secondsToLock * 1000;
+
+        // generate milliseconds lock value
+        int secondsLocked = minutesLocked * 60 + hoursLocked * 3600;
+        int millsLocked = secondsLocked * 1000;
 
         // start countdown and lock user into app
-        startCountDown(millsToLock, COUNTDOWN_INTERVAL);
+        startCountDown(millsLocked, COUNTDOWN_INTERVAL);
     }
 
 //    @Override
