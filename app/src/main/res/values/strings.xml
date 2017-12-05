@@ -9,4 +9,8 @@
 
     <string name="dialog_intent_hours">hours_to_lock</string>
     <string name="dialog_intent_minutes">minutes_to_lock</string>
+
+    <string name="dialog_confirm_title">Are you sure?</string>
+    <string name="dialog_confirm_message">
+        You will be <b>fully locked</b> out of your phone for: \n\n</string>
 </resources>

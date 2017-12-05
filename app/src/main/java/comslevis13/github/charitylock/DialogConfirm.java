@@ -19,6 +19,9 @@ import java.util.logging.Logger;
 
 public class DialogConfirm extends android.support.v4.app.DialogFragment {
 
+    private int hoursToLock;
+    private int minutesToLock;
+
     public static DialogConfirm newInstance() {
         DialogConfirm dialogConfirm = new DialogConfirm();
         return dialogConfirm;
@@ -27,7 +30,20 @@ public class DialogConfirm extends android.support.v4.app.DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
+        Bundle getBundle = getArguments();
+        if (getBundle == null) {
+            Log.e("bundle null", "bundle null");
+        }
+
+        // get time vals from bundle
+        hoursToLock = getBundle.getInt(getString(R.string.dialog_intent_hours),
+                0);
+        minutesToLock = getBundle.getInt(getString(R.string.dialog_intent_minutes),
+                0);
+
         return new AlertDialog.Builder(getActivity())
+                .setTitle(getString(R.string.dialog_confirm_title))
+                .setMessage(buildConfirmDialogMessage())
                 .setPositiveButton(getString(R.string.confirm_dialog_yes),
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
@@ -43,6 +59,13 @@ public class DialogConfirm extends android.support.v4.app.DialogFragment {
                         }
                 )
                 .create();
+    }
+
+    private String buildConfirmDialogMessage () {
+        String message = "\n" + getString(R.string.dialog_confirm_message) +
+                String.valueOf(hoursToLock) + " hours, " +
+                String.valueOf(minutesToLock) + " minutes \n";
+        return message;
     }
 
     /* The activity that creates an instance of this dialog fragment must

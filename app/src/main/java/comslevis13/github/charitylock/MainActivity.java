@@ -68,6 +68,12 @@ public class MainActivity extends FragmentActivity {
 
     private void launchDialogConfirm () {
         DialogConfirm dialogConfirm = new DialogConfirm();
+
+        Bundle timeBundle = new Bundle();
+        timeBundle.putInt(getString(R.string.dialog_intent_hours), hoursToLock);
+        timeBundle.putInt(getString(R.string.dialog_intent_minutes), minutesToLock);
+        dialogConfirm.setArguments(timeBundle);
+
         dialogConfirm.show(getSupportFragmentManager(), "launchDialog");
     }
 
