@@ -50,17 +50,34 @@ public class PersistActivity extends FragmentActivity {
     long mins;
     long secs;
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private long millsLeft;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.persist_activity);
 
-        // get passed-in timeToLock from intent
-        Intent intent = getIntent();
-        hoursLocked = intent.getIntExtra(getString(R.string.dialog_intent_hours), 0);
-        minutesLocked = intent.getIntExtra(getString(R.string.dialog_intent_minutes), 0);
+        if (savedInstanceState == null) {
+            // get passed-in timeToLock from intent
+            Intent intent = getIntent();
+            hoursLocked = intent.getIntExtra(getString(R.string.dialog_intent_hours), 0);
+            minutesLocked = intent.getIntExtra(getString(R.string.dialog_intent_minutes), 0);
+
+            // generate milliseconds lock value
+            long secondsLocked = minutesLocked * 60 + hoursLocked * 3600;
+            millsLeft = secondsLocked * 1000;
+        }
+        else {
+            // restore time left
+            long mSavedTimeInMilliseconds = savedInstanceState.getLong(
+                    getString(R.string.persist_mills_current_save_key));
+            long mSavedMillsLeft = savedInstanceState.getLong(
+                    getString(R.string.persist_mills_left_save_key));
+            long currentTimeInMilliseconds = System.currentTimeMillis();
+
+            millsLeft = mSavedMillsLeft - (currentTimeInMilliseconds - mSavedTimeInMilliseconds);
+        }
 
         // set text view variables
         hoursLeftTextView = (TextView) findViewById(R.id.text_view_hours_left_persist);
@@ -68,12 +85,8 @@ public class PersistActivity extends FragmentActivity {
         secondsLeftTextView = (TextView) findViewById(R.id.text_view_seconds_left_persist);
         timeLeftTitle = (TextView) findViewById(R.id.time_left_title);
 
-        // generate milliseconds lock value
-        int secondsLocked = minutesLocked * 60 + hoursLocked * 3600;
-        int millsLocked = secondsLocked * 1000;
-
         // start countdown and lock user into app
-        startCountDown(millsLocked, COUNTDOWN_INTERVAL);
+        startCountDown(millsLeft, COUNTDOWN_INTERVAL);
     }
 
     private void startCountDown(long millisUntilFinished, long countDownInterval) {
@@ -93,6 +106,9 @@ public class PersistActivity extends FragmentActivity {
                 hoursLeftTextView.setText(Long.toString(hrs));
                 minutesLeftTextView.setText(Long.toString(mins));
                 secondsLeftTextView.setText(Long.toString(secs));
+
+                // for savedInstanceState
+                millsLeft = millisUntilFinished;
             }
             // finished!
             public void onFinish() {
@@ -110,10 +126,30 @@ public class PersistActivity extends FragmentActivity {
         // bring user back to main screen
         Intent mainActivity = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(mainActivity);
+        finish();
     }
 
     @Override
     public void onBackPressed() {
         //
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        // save mills left and current time in mills
+        outState.putLong(getString(R.string.persist_mills_left_save_key), millsLeft);
+        outState.putLong(getString(R.string.persist_mills_current_save_key),
+                System.currentTimeMillis());
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onDestroy() {
+        // stop persistService
+        Intent persistService = new Intent(getApplicationContext(), PersistService.class);
+        stopService(persistService);
+
+        super.onDestroy();
     }
 }

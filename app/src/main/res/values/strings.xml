@@ -8,6 +8,8 @@
     <string name="text_view_minute_picker">Minutes</string>
     <string name="text_view_hour_picker">Hours</string>
     <string name="text_view_seconds">Seconds</string>
+    <string name="hour_picker_save_key">savedInstanceState for hourPicker</string>
+    <string name="minute_picker_save_key">savedInstanceState for minutePicker</string>
 
     <string name="dialog_intent_hours">hours_to_lock</string>
     <string name="dialog_intent_minutes">minutes_to_lock</string>
@@ -17,5 +19,7 @@
         You will be <b>fully locked</b> out of your phone for: \n\n</string>
 
     <string name="persist_time_left">Time Left</string>
+    <string name="persist_mills_current_save_key">savedInstanceState for current time in milliseconds</string>
+    <string name="persist_mills_left_save_key">savedInstanceState for mills left</string>
 
 </resources>

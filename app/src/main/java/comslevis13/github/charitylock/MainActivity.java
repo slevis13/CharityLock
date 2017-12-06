@@ -16,16 +16,12 @@ import android.widget.TimePicker;
 
 public class MainActivity extends FragmentActivity {
 
-    // TODO: time selector UI
-    // TODO: what happens when device rotates?
-    // TODO: what happens when user gets a phone call, text, other notification?
-    // TODO; if user doesn't have wifi/data? could generate json object, send when wifi detected
-
     private int hoursToLock;
     private int minutesToLock;
 
     private NumberPicker hourPicker;
     private NumberPicker minutePicker;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +31,17 @@ public class MainActivity extends FragmentActivity {
         hourPicker = (NumberPicker) findViewById(R.id.hourPicker);
         minutePicker = (NumberPicker) findViewById(R.id.minutePicker);
         setPickerRanges();
+
+        if (savedInstanceState != null) {
+            // restore saved state of number pickers
+            final int mHoursSaved = savedInstanceState.getInt(
+                    getString(R.string.hour_picker_save_key), 0);
+            final int mMinutesSaved = savedInstanceState.getInt(
+                    getString(R.string.minute_picker_save_key), 0);
+
+            hourPicker.setValue(mHoursSaved);
+            minutePicker.setValue(mMinutesSaved);
+        }
 
         // listen for button click
         final Button lockButton = (Button) findViewById(R.id.button_time_picker);
@@ -59,11 +66,18 @@ public class MainActivity extends FragmentActivity {
         launchDialogConfirm();
     }
 
+    private int getHours() {
+        return hourPicker.getValue();
+    }
+
+    private int getMinutes() {
+        return minutePicker.getValue();
+    }
     // get time from time picker
     private void getTime () {
         // get input from editText, store in timeToLock
-        hoursToLock = hourPicker.getValue();
-        minutesToLock = minutePicker.getValue();
+        hoursToLock = getHours();
+        minutesToLock = getMinutes();
     }
 
     private void launchDialogConfirm () {
@@ -86,9 +100,25 @@ public class MainActivity extends FragmentActivity {
         intent.putExtra(getString(R.string.dialog_intent_hours), hoursToLock);
         intent.putExtra(getString(R.string.dialog_intent_minutes), minutesToLock);
         startActivity(intent);
+        finish();
     }
 
     public void onDialogNegativeClick() {
         // User touched the dialog's negative button
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        // save state of hourPicker and minutePicker
+        outState.putInt(getString(R.string.hour_picker_save_key), getHours());
+        outState.putInt(getString(R.string.minute_picker_save_key), getMinutes());
+
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onDestroy() {
+        findViewById(R.id.button_time_picker).setOnClickListener(null);
+        super.onDestroy();
     }
 }

@@ -44,14 +44,15 @@ public class PersistService extends Service {
                 if (stopTask){
                     this.cancel();
                 }
-                // force PersistActivity to foreground
-                startActivity(forceToTop);
+                else {
+                    // force PersistActivity to foreground
+                    startActivity(forceToTop);
+                }
             }
         };
         Timer timer = new Timer();
         timer.scheduleAtFixedRate(task, 0, INTERVAL);
     }
-
 
     @Override
     public void onDestroy(){
