@@ -53,7 +53,6 @@ public class PersistActivity extends FragmentActivity {
     private long secs;
 
     private long millsLeft;
-    public static final String MILLS_SAVED = "SavedMillisecondsLeft";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,8 +63,7 @@ public class PersistActivity extends FragmentActivity {
         if (savedInstanceState == null) {
             // get passed-in timeToLock from intent
             Intent intent = getIntent();
-            millsLeft = intent.getLongExtra(
-                    getString(R.string.dialog_intent_mills), 0);
+            millsLeft = intent.getLongExtra(getString(R.string.dialog_intent_mills), 0);
         }
         else {
             // restore time left
@@ -107,12 +105,12 @@ public class PersistActivity extends FragmentActivity {
                 minutesLeftTextView.setText(Long.toString(mins));
                 secondsLeftTextView.setText(Long.toString(secs));
 
-                // for savedInstanceState
+                // update global variable
                 millsLeft = millisUntilFinished;
             }
-            // finished!
+            // finished
             public void onFinish() {
-                timeLeftTitle.setText("Done!");
+                timeLeftTitle.setText(getString(R.string.persist_text_on_finish));
                 millsLeft = 0;
                 unlockCountDown();
             }
@@ -132,7 +130,25 @@ public class PersistActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
-        //
+        // disable back button -- redundant due to persistService, but keeping it anyway
+    }
+
+    @Override
+    protected void onPause() {
+        storeTimesInSharedPreferences();
+        super.onPause();
+    }
+
+    // update sharedPreferences with timeLeft and currentTime, in milliseconds
+    private void storeTimesInSharedPreferences() {
+        SharedPreferences settings = getSharedPreferences(
+                getString(R.string.shared_prefs_file_name), 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putLong(getString(R.string.shared_prefs_milliseconds_saved), millsLeft);
+        editor.putLong(getString(R.string.shared_prefs_time_at_shutdown),
+                System.currentTimeMillis());
+
+        editor.commit();
     }
 
     @Override
@@ -148,17 +164,6 @@ public class PersistActivity extends FragmentActivity {
     @Override
     protected void onStop() {
         super.onStop();
-
-        SharedPreferences settings = getSharedPreferences(
-                getString(R.string.shared_prefs_file_name), 0);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putLong(getString(R.string.shared_prefs_milliseconds_saved), millsLeft);
-        editor.putLong(getString(R.string.shared_prefs_time_at_shutdown),
-                System.currentTimeMillis());
-
-        editor.commit();
-
-        Log.d("shared prefs onStop", "shared prefs onStop -- ya boy");
     }
 
     @Override

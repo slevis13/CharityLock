@@ -22,6 +22,7 @@
     <string name="persist_time_left">Time Left</string>
     <string name="persist_mills_current_save_key">savedInstanceState for current time in milliseconds</string>
     <string name="persist_mills_left_save_key">savedInstanceState for mills left</string>
+    <string name="persist_text_on_finish">Done!</string>
 
     <string name="shared_prefs_milliseconds_saved">sharedPreferences save for time left</string>
     <string name="shared_prefs_file_name">sharedPreferences file for time left</string>

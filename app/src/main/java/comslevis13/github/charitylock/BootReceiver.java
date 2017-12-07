@@ -10,12 +10,13 @@ import android.util.Log;
  * Created by slevi on 12/6/2017.
  */
 
+// persist lock even if user reboots the device
 public class BootReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
+        // receive broadcast when device boots up
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
-            Log.d("got boot broadcast", "got boot broadcast -- ya boy");
-
+            // check if there is time left on lock
             SharedPreferences settings = context.getSharedPreferences(
                     context.getString(R.string.shared_prefs_file_name), 0);
             long millsSaved = settings.getLong(
@@ -26,7 +27,7 @@ public class BootReceiver extends BroadcastReceiver {
             long timeLeftTotal = millsSaved - (currentTime - timeAtShutdown);
 
             if (timeLeftTotal > 0) {
-                Log.d("got shared preferences", "got shared prefs -- ya boy");
+                // launch persistActivity with new timeLeft value
                 Intent persistActivity = new Intent(context, PersistActivity.class);
                 persistActivity.putExtra(
                         context.getString(R.string.dialog_intent_mills), timeLeftTotal);
