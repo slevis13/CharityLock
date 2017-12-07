@@ -13,6 +13,7 @@
 
     <string name="dialog_intent_hours">hours_to_lock</string>
     <string name="dialog_intent_minutes">minutes_to_lock</string>
+    <string name="dialog_intent_mills">mills_to_lock</string>
 
     <string name="dialog_confirm_title">Are you sure?</string>
     <string name="dialog_confirm_message">
@@ -21,5 +22,9 @@
     <string name="persist_time_left">Time Left</string>
     <string name="persist_mills_current_save_key">savedInstanceState for current time in milliseconds</string>
     <string name="persist_mills_left_save_key">savedInstanceState for mills left</string>
+
+    <string name="shared_prefs_milliseconds_saved">sharedPreferences save for time left</string>
+    <string name="shared_prefs_file_name">sharedPreferences file for time left</string>
+    <string name="shared_prefs_time_at_shutdown">sharedPreferences time at shutdown in ms</string>
 
 </resources>

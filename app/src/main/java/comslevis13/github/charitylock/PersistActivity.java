@@ -8,6 +8,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -35,10 +36,11 @@ import java.util.TimerTask;
 
 public class PersistActivity extends FragmentActivity {
 
-    private int hoursLocked;
-    private int minutesLocked;
-
     private int COUNTDOWN_INTERVAL = 100;
+    private long MILLISECONDS_IN_HOUR = 3600000;
+    private long MILLISECONDS_IN_MINUTE = 60000;
+    private long MILLISECONDS_IN_SECOND = 1000;
+
     private FragmentManager supportFragmentManager;
 
     private TextView hoursLeftTextView;
@@ -46,11 +48,12 @@ public class PersistActivity extends FragmentActivity {
     private TextView secondsLeftTextView;
     private TextView timeLeftTitle;
 
-    long hrs;
-    long mins;
-    long secs;
+    private long hrs;
+    private long mins;
+    private long secs;
 
     private long millsLeft;
+    public static final String MILLS_SAVED = "SavedMillisecondsLeft";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,12 +64,8 @@ public class PersistActivity extends FragmentActivity {
         if (savedInstanceState == null) {
             // get passed-in timeToLock from intent
             Intent intent = getIntent();
-            hoursLocked = intent.getIntExtra(getString(R.string.dialog_intent_hours), 0);
-            minutesLocked = intent.getIntExtra(getString(R.string.dialog_intent_minutes), 0);
-
-            // generate milliseconds lock value
-            long secondsLocked = minutesLocked * 60 + hoursLocked * 3600;
-            millsLeft = secondsLocked * 1000;
+            millsLeft = intent.getLongExtra(
+                    getString(R.string.dialog_intent_mills), 0);
         }
         else {
             // restore time left
@@ -99,9 +98,10 @@ public class PersistActivity extends FragmentActivity {
         new CountDownTimer(millisUntilFinished, countDownInterval) {
             // update text to show time left onTick
             public void onTick(long millisUntilFinished) {
-                hrs = millisUntilFinished / 3600000;
-                mins = (millisUntilFinished % 3600000)/60000;
-                secs = ((millisUntilFinished % 3600000) % 60000) / 1000;
+                hrs = millisUntilFinished / MILLISECONDS_IN_HOUR;
+                mins = (millisUntilFinished % MILLISECONDS_IN_HOUR) / MILLISECONDS_IN_MINUTE;
+                secs = ((millisUntilFinished % MILLISECONDS_IN_HOUR)
+                        % MILLISECONDS_IN_MINUTE) / MILLISECONDS_IN_SECOND;
 
                 hoursLeftTextView.setText(Long.toString(hrs));
                 minutesLeftTextView.setText(Long.toString(mins));
@@ -113,6 +113,7 @@ public class PersistActivity extends FragmentActivity {
             // finished!
             public void onFinish() {
                 timeLeftTitle.setText("Done!");
+                millsLeft = 0;
                 unlockCountDown();
             }
         }.start();
@@ -142,6 +143,22 @@ public class PersistActivity extends FragmentActivity {
                 System.currentTimeMillis());
 
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        SharedPreferences settings = getSharedPreferences(
+                getString(R.string.shared_prefs_file_name), 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putLong(getString(R.string.shared_prefs_milliseconds_saved), millsLeft);
+        editor.putLong(getString(R.string.shared_prefs_time_at_shutdown),
+                System.currentTimeMillis());
+
+        editor.commit();
+
+        Log.d("shared prefs onStop", "shared prefs onStop -- ya boy");
     }
 
     @Override

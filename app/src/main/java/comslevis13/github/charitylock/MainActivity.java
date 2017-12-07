@@ -93,12 +93,18 @@ public class MainActivity extends FragmentActivity {
 
     // callbacks for dialog button clicks
 
+    private long hoursAndMinutesToMilliseconds(int hoursArg, int minutesArg) {
+        long mills = (long) (hoursArg * 3600000) + (minutesArg * 60000);
+        return mills;
+    }
+
     public void onDialogPositiveClick() {
         // User touched the dialog's positive button
         // pass hours, minutes to persistactivity
         Intent intent = new Intent(this, PersistActivity.class);
-        intent.putExtra(getString(R.string.dialog_intent_hours), hoursToLock);
-        intent.putExtra(getString(R.string.dialog_intent_minutes), minutesToLock);
+        long millsToLock = hoursAndMinutesToMilliseconds(hoursToLock, minutesToLock);
+        intent.putExtra(getString(R.string.dialog_intent_mills), millsToLock);
+
         startActivity(intent);
         finish();
     }
