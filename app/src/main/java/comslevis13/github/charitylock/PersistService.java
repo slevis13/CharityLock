@@ -25,7 +25,6 @@ public class PersistService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-
         stopTask = false;
         startPersistRefresh();
     }
@@ -39,7 +38,6 @@ public class PersistService extends Service {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-
                 // to stop the polling
                 if (stopTask){
                     this.cancel();

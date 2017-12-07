@@ -94,30 +94,35 @@ public class PersistActivity extends FragmentActivity {
 
         // launch countdown, display time
         new CountDownTimer(millisUntilFinished, countDownInterval) {
-            // update text to show time left onTick
             public void onTick(long millisUntilFinished) {
-                hrs = millisUntilFinished / MILLISECONDS_IN_HOUR;
-                mins = (millisUntilFinished % MILLISECONDS_IN_HOUR) / MILLISECONDS_IN_MINUTE;
-                secs = ((millisUntilFinished % MILLISECONDS_IN_HOUR)
-                        % MILLISECONDS_IN_MINUTE) / MILLISECONDS_IN_SECOND;
-
-                hoursLeftTextView.setText(Long.toString(hrs));
-                minutesLeftTextView.setText(Long.toString(mins));
-                secondsLeftTextView.setText(Long.toString(secs));
-
-                // update global variable
-                millsLeft = millisUntilFinished;
+                handleOnTick(millisUntilFinished);
             }
             // finished
             public void onFinish() {
-                timeLeftTitle.setText(getString(R.string.persist_text_on_finish));
-                millsLeft = 0;
-                unlockCountDown();
+                unlockAndFinish();
             }
         }.start();
     }
 
-    private void unlockCountDown() {
+    private void handleOnTick(long milliseconds) {
+        // generate values for time left
+        hrs = milliseconds / MILLISECONDS_IN_HOUR;
+        mins = (milliseconds % MILLISECONDS_IN_HOUR) / MILLISECONDS_IN_MINUTE;
+        secs = ((milliseconds % MILLISECONDS_IN_HOUR)
+                % MILLISECONDS_IN_MINUTE) / MILLISECONDS_IN_SECOND;
+        // display values
+        hoursLeftTextView.setText(Long.toString(hrs));
+        minutesLeftTextView.setText(Long.toString(mins));
+        secondsLeftTextView.setText(Long.toString(secs));
+
+        // update global variable
+        millsLeft = milliseconds;
+    }
+
+    private void unlockAndFinish() {
+        timeLeftTitle.setText(getString(R.string.persist_text_on_finish));
+        millsLeft = 0;
+
         // stop PersistService (i.e. unlock user from app)
         Intent persistService = new Intent(getApplicationContext(), PersistService.class);
         stopService(persistService);
@@ -130,7 +135,7 @@ public class PersistActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
-        // disable back button -- redundant due to persistService, but keeping it anyway
+        // disable back button
     }
 
     @Override
@@ -148,7 +153,7 @@ public class PersistActivity extends FragmentActivity {
         editor.putLong(getString(R.string.shared_prefs_time_at_shutdown),
                 System.currentTimeMillis());
 
-        editor.commit();
+        editor.apply();
     }
 
     @Override
@@ -162,15 +167,10 @@ public class PersistActivity extends FragmentActivity {
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
     protected void onDestroy() {
         // stop persistService
-        Intent persistService = new Intent(getApplicationContext(), PersistService.class);
-        stopService(persistService);
+//        Intent persistService = new Intent(getApplicationContext(), PersistService.class);
+//        stopService(persistService);
 
         super.onDestroy();
     }

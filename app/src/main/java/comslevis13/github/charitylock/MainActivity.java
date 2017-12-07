@@ -23,6 +23,7 @@ public class MainActivity extends FragmentActivity {
     private NumberPicker hourPicker;
     private NumberPicker minutePicker;
 
+    private Button lockButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,18 +46,12 @@ public class MainActivity extends FragmentActivity {
         }
 
         // listen for button click
-        final Button lockButton = (Button) findViewById(R.id.button_time_picker);
+        lockButton = (Button) findViewById(R.id.button_time_picker);
         lockButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 handleLockButtonClick();
             }
         });
-    }
-
-    @Override
-    protected void onPause() {
-        Log.d("mainActivity onPause", "-- ya boy");
-        super.onPause();
     }
 
     // initialize number pickers
@@ -76,10 +71,10 @@ public class MainActivity extends FragmentActivity {
     private int getHours() {
         return hourPicker.getValue();
     }
-
     private int getMinutes() {
         return minutePicker.getValue();
     }
+
     // get time from time picker
     private void getTime () {
         // get input from editText, store in timeToLock
@@ -98,16 +93,16 @@ public class MainActivity extends FragmentActivity {
         dialogConfirm.show(getSupportFragmentManager(), "launchDialog");
     }
 
-    // callbacks for dialog button clicks
-
     private long hoursAndMinutesToMilliseconds(int hoursArg, int minutesArg) {
         long mills = (long) (hoursArg * 3600000) + (minutesArg * 60000);
         return mills;
     }
 
+    // callbacks for dialog button clicks
+
     public void onDialogPositiveClick() {
         // User touched the dialog's positive button
-        // pass hours, minutes to persistactivity
+        // pass time to persistactivity
         Intent intent = new Intent(this, PersistActivity.class);
         long millsToLock = hoursAndMinutesToMilliseconds(hoursToLock, minutesToLock);
         intent.putExtra(getString(R.string.dialog_intent_mills), millsToLock);
@@ -123,15 +118,14 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         // save state of hourPicker and minutePicker
+        super.onSaveInstanceState(outState);
         outState.putInt(getString(R.string.hour_picker_save_key), getHours());
         outState.putInt(getString(R.string.minute_picker_save_key), getMinutes());
-
-        super.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onDestroy() {
-        findViewById(R.id.button_time_picker).setOnClickListener(null);
         super.onDestroy();
+        lockButton.setOnClickListener(null);
     }
 }
