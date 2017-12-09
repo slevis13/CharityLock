@@ -28,4 +28,7 @@
     <string name="shared_prefs_file_name">sharedPreferences file for time left</string>
     <string name="shared_prefs_time_at_shutdown">sharedPreferences time at shutdown in ms</string>
 
+    <string name="notification_title">Locked</string>
+    <string name="notification_message">Time left: </string>
+
 </resources>

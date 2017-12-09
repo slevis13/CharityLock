@@ -3,6 +3,7 @@ package comslevis13.github.charitylock;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Application;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -18,6 +19,7 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -100,6 +102,7 @@ public class PersistActivity extends FragmentActivity {
             // finished
             public void onFinish() {
                 unlockAndFinish();
+                sendDoneNotification();
             }
         }.start();
     }
@@ -117,6 +120,8 @@ public class PersistActivity extends FragmentActivity {
 
         // update global variable
         millsLeft = milliseconds;
+
+        updateNotification();
     }
 
     private void unlockAndFinish() {
@@ -131,6 +136,37 @@ public class PersistActivity extends FragmentActivity {
         Intent mainActivity = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(mainActivity);
         finish();
+    }
+
+    private void updateNotification() {
+        String notificationMessageString =
+                Long.toString(hrs) + ": " + Long.toString(mins) + ": " + Long.toString(secs);
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        // get notification object
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.notification_icon)
+                        .setContentTitle(getString(R.string.notification_title))
+                        .setContentText(notificationMessageString)
+                        .setPriority(NotificationCompat.PRIORITY_LOW);
+        // fire notification
+        mNotificationManager.notify(001, mBuilder.build());
+    }
+
+    private void sendDoneNotification() {
+        String doneNotificationMessage = "Done!";
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.notification_icon)
+                        .setContentTitle("Unlocked")
+                        .setContentText(doneNotificationMessage)
+                        .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+        mNotificationManager.notify(001, mBuilder.build());
     }
 
     @Override
