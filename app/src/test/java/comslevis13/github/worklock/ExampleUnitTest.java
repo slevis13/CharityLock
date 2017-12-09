@@ -1,4 +1,4 @@
-package comslevis13.github.charitylock;
+package comslevis13.github.worklock;
 
 import org.junit.Test;
 

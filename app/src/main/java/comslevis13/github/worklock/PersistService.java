@@ -1,17 +1,10 @@
-package comslevis13.github.charitylock;
+package comslevis13.github.worklock;
 
-import android.app.ActivityManager;
-import android.app.ActivityOptions;
 import android.app.Service;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
-import android.os.PowerManager;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 

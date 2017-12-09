@@ -1,17 +1,9 @@
-package comslevis13.github.charitylock;
+package comslevis13.github.worklock;
 
-import android.app.Activity;
 import android.app.Dialog;
-import android.app.DialogFragment;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
-import android.widget.TextView;
-
-import java.util.logging.Logger;
 
 /**
  * Created by slevi on 11/27/2017.

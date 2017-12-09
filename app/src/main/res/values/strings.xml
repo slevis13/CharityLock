@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CharityLock</string>
+    <string name="app_name">WorkLock</string>
 
     <string name="lock_button">LOCK</string>
     <string name="confirm_dialog_yes">Lock it!</string>

@@ -1,10 +1,9 @@
-package comslevis13.github.charitylock;
+package comslevis13.github.worklock;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 /**
  * Created by slevi on 12/6/2017.

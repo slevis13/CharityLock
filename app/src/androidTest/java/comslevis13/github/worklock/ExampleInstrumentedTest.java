@@ -1,4 +1,4 @@
-package comslevis13.github.charitylock;
+package comslevis13.github.worklock;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
