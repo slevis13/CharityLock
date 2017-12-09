@@ -2,6 +2,7 @@ package comslevis13.github.worklock;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 
@@ -43,10 +44,18 @@ public class DialogConfirm extends android.support.v4.app.DialogFragment {
                 .create();
     }
 
-    private String buildConfirmDialogMessage () {
-        String message = "\n" + getString(R.string.dialog_confirm_message) +
-                String.valueOf(hoursToLock) + " hours, " +
-                String.valueOf(minutesToLock) + " minutes \n";
+    private String buildConfirmDialogMessage() {
+        String message = getString(R.string.dialog_confirm_message) + " ";
+        if (hoursToLock > 0) {
+            message = message + String.valueOf(hoursToLock) + " hours, " +
+                    String.valueOf(minutesToLock) + " minutes.";
+        }
+        else if (minutesToLock > 1) {
+            message = message + String.valueOf(minutesToLock) + " minutes.";
+        }
+        else {
+            message = message + String.valueOf(minutesToLock) + " minute.";
+        }
         return message;
     }
 }

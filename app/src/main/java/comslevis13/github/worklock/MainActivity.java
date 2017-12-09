@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.NumberPicker;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -61,7 +62,17 @@ public class MainActivity extends AppCompatActivity {
     // get time and launch confirmation dialog
     private void handleLockButtonClick () {
         getTime();
-        launchDialogConfirm();
+        if (isTimeNonzero(hoursToLock, minutesToLock)) {
+            launchDialogConfirm();
+        }
+        else {
+            Toast.makeText(this, "Set a time!",
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private boolean isTimeNonzero(int hrs, int mins) {
+        return hrs + mins > 0;
     }
 
     private int getHours() {

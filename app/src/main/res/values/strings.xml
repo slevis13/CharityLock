@@ -1,10 +1,10 @@
 <resources>
-    <string name="app_name">WorkLock</string>
+    <string name="app_name">Warlock</string>
 
-    <string name="lock_button">LOCK</string>
+    <string name="lock_button">Lock</string>
     <string name="confirm_dialog_yes">Lock it!</string>
     <string name="confirm_dialog_cancel">Cancel</string>
-    <string name="lock_text_view">Time To Lock</string>
+    <string name="lock_text_view">Unlocked</string>
     <string name="text_view_minute_picker">Minutes</string>
     <string name="text_view_hour_picker">Hours</string>
     <string name="text_view_seconds">Seconds</string>
@@ -15,11 +15,11 @@
     <string name="dialog_intent_minutes">minutes_to_lock</string>
     <string name="dialog_intent_mills">mills_to_lock</string>
 
-    <string name="dialog_confirm_title">Are you sure?</string>
+    <string name="dialog_confirm_title">Ready?</string>
     <string name="dialog_confirm_message">
-        You will be <b>fully locked</b> out of your phone for: \n\n</string>
+        You will be fully locked out of your phone for</string>
 
-    <string name="persist_time_left">Time Left</string>
+    <string name="persist_time_left">Locked</string>
     <string name="persist_mills_current_save_key">savedInstanceState for current time in milliseconds</string>
     <string name="persist_mills_left_save_key">savedInstanceState for mills left</string>
     <string name="persist_text_on_finish">Done!</string>
