@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="comslevis13.github.worklock.MainActivity"
+    tools:context="comslevis13.github.warlock.MainActivity"
     tools:layout_editor_absoluteY="81dp"
     android:background="@color/platinum">
 

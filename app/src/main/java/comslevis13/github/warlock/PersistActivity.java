@@ -1,7 +1,6 @@
-package comslevis13.github.worklock;
+package comslevis13.github.warlock;
 
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -186,8 +185,8 @@ public class PersistActivity extends FragmentActivity {
     @Override
     protected void onDestroy() {
         // stop persistService
-//        Intent persistService = new Intent(getApplicationContext(), PersistService.class);
-//        stopService(persistService);
+        Intent persistService = new Intent(getApplicationContext(), PersistService.class);
+        stopService(persistService);
 
         super.onDestroy();
     }
