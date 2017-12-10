@@ -1,6 +1,7 @@
 package comslevis13.github.worklock;
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -120,6 +121,7 @@ public class PersistActivity extends FragmentActivity {
     private void updateNotification() {
         String notificationMessageString =
                 Long.toString(hrs) + ": " + Long.toString(mins) + ": " + Long.toString(secs);
+
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         // get notification object
@@ -140,7 +142,7 @@ public class PersistActivity extends FragmentActivity {
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.notification_icon)
+                        .setSmallIcon(R.drawable.notification_icon_unlock)
                         .setContentTitle("Unlocked")
                         .setContentText(doneNotificationMessage)
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT);
