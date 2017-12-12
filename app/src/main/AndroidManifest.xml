@@ -3,6 +3,8 @@
     package="comslevis13.github.warlock">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
         android:allowBackup="true"
@@ -23,6 +25,8 @@
             android:parentActivityName=".MainActivity">
         </activity>
         <service android:name=".PersistService"
+            android:enabled="true"/>
+        <service android:name=".WhiteListService"
             android:enabled="true"/>
         <receiver
             android:name=".BootReceiver"

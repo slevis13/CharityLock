@@ -1,9 +1,16 @@
 package comslevis13.github.warlock;
 
+import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.NumberPicker;
@@ -18,6 +25,9 @@ public class MainActivity extends AppCompatActivity {
     private NumberPicker minutePicker;
 
     private Button lockButton;
+
+    protected static final int MY_PERMISSIONS_REQUEST_CALL_PHONE = 1;
+    protected TelephonyManager mTelephonyManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,8 +69,69 @@ public class MainActivity extends AppCompatActivity {
         minutePicker.setMaxValue(59);
     }
 
-    // get time and launch confirmation dialog
+    // handled as own method in case other functionality needs to be added to button click
     private void handleLockButtonClick () {
+        checkTelephonyAndPermissions();
+    }
+
+    private void checkTelephonyAndPermissions() {
+        mTelephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+        // check if telephony enabled on device
+        if (isTelephonyEnabled(mTelephonyManager)) {
+            // check permission; if not granted, request it
+            Log.d("telephony", "telephony enabled -- ya boy");
+            if (isPhonePermissionEnabled()) {
+                getTimeAndLaunchDialog();
+            }
+            else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.CALL_PHONE},
+                        MY_PERMISSIONS_REQUEST_CALL_PHONE);
+            }
+        }
+        // if telephony not enabled, device cannot make calls anyway; launch lock service
+        else {
+            getTimeAndLaunchDialog();
+        }
+    }
+
+    protected static boolean isTelephonyEnabled(TelephonyManager telephonyManager) {
+        if (telephonyManager != null) {
+            if (telephonyManager.getSimState() ==
+                    TelephonyManager.SIM_STATE_READY) {
+                // device has telephony enabled
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isPhonePermissionEnabled() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) !=
+                PackageManager.PERMISSION_GRANTED) {
+            // permission not yet granted
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        if (requestCode == MY_PERMISSIONS_REQUEST_CALL_PHONE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // permission granted
+                getTimeAndLaunchDialog();
+            } else {
+                // permission denied
+            }
+            return;
+        }
+    }
+
+    private void getTimeAndLaunchDialog() {
         getTime();
         if (isTimeNonzero(hoursToLock, minutesToLock)) {
             launchDialogConfirm();
