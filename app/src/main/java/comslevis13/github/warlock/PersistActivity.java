@@ -16,6 +16,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
+import android.telephony.PhoneNumberUtils;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
@@ -45,11 +46,12 @@ public class PersistActivity extends FragmentActivity {
     private long hrs;
     private long mins;
     private long secs;
-
     private long millsLeft;
+    private CountDownTimer mCountdownTimer;
 
     private TelephonyManager mTelephonyManager;
     private static final int MY_PERMISSIONS_REQUEST_CALL_PHONE = 1;
+    private String phoneNumber = "911";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,11 +84,6 @@ public class PersistActivity extends FragmentActivity {
         mDialButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                stopPersistService();
-//
-//
-//                Intent whiteListService = new Intent(getApplicationContext(), WhiteListService.class);
-//                startService(whiteListService);
                 handleButtonPress();
             }
         });
@@ -101,17 +98,10 @@ public class PersistActivity extends FragmentActivity {
         if (MainActivity.isTelephonyEnabled(mTelephonyManager)) {
             // check permission; if not granted, request it
             Log.d("telephony", "telephony enabled -- ya boy");
-            if (isPhonePermissionEnabled()) {
-                // todo: handle emergency calls
-                // todo: set listener to return to activity after call
-                // todo: dialing UI
-                makePhoneCall();
-                Log.d("phone permiss enabled", "got it -- ya boy");
-
-            } else {
-                Toast.makeText(this, "Calling permission not granted",
-                        Toast.LENGTH_LONG).show();
-            }
+            // todo: test handling of emergency calls
+            // todo: set listener to return to activity after call
+            // todo: UI to input #
+            handlePhoneCall(phoneNumber);
         }
         // if telephony disabled, disable call button
         else {
@@ -134,70 +124,44 @@ public class PersistActivity extends FragmentActivity {
         }
     }
 
-    @SuppressLint("MissingPermission")
-    private void makePhoneCall() {
-        Intent intent = new Intent(Intent.ACTION_CALL);
-        intent.setData(Uri.parse("tel:3046203109"));
-        if (isPhonePermissionEnabled()) {
-            startActivity(intent);
+    private void handlePhoneCall(String phoneNumber) {
+        if (PhoneNumberUtils.isEmergencyNumber(phoneNumber)) {
+            // stop the lock if user dials an emergency number
+            stopPersistService();
+            // dial emergency number in dialer
+            Uri emergencyNumber = Uri.parse("tel:" + phoneNumber);
+            Intent emergencyIntent = new Intent(Intent.ACTION_DIAL, emergencyNumber);
+            startActivity(emergencyIntent);
+            // stop lock and countdown, update notification
+            stopCountdownAndSendDoneNotification();
+        }
+        else {
+            // not emergency number
         }
     }
 
-//    private boolean isTelephonyEnabled(TelephonyManager telephonyManager) {
-//        if (telephonyManager != null) {
-//            if (telephonyManager.getSimState() ==
-//                    TelephonyManager.SIM_STATE_READY) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-//
-//    private void checkForPhonePermission() {
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) !=
-//                PackageManager.PERMISSION_GRANTED) {
-//            stopPersistService();
-//            // Permission not yet granted. Use requestPermissions().
-//            Log.d("permission", "permission not granted -- ya boy");
-//            ActivityCompat.requestPermissions(this,
-//                    new String[]{Manifest.permission.CALL_PHONE},
-//                    MY_PERMISSIONS_REQUEST_CALL_PHONE);
-//        }
-//    }
-//
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
-//                                           @NonNull int[] grantResults) {
-//        if (requestCode == MY_PERMISSIONS_REQUEST_CALL_PHONE) {
-//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//
-//                // permission was granted, yay! Do the
-//                // contacts-related task you need to do.
-//
-//            } else {
-//                startPersistService();
-//                // permission denied, boo! Disable the
-//                // functionality that depends on this permission.
-//            }
-//            return;
-//        }
-//
-//    }
+    @SuppressLint("MissingPermission")
+    private void makePhoneCall(String phoneNumber) {
+        Intent callIntent = new Intent(Intent.ACTION_CALL);
+        callIntent.setData(Uri.parse("tel:" + phoneNumber));
+        if (isPhonePermissionEnabled()) {
+            // todo: set listener to retrun to lock after call
+            startActivity(callIntent);
+        }
+
+    }
 
     private void startCountDown(long millisUntilFinished, long countDownInterval) {
-
         // launch persist service
         startPersistService();
-
         // launch countdown, display time
-        new CountDownTimer(millisUntilFinished, countDownInterval) {
+        mCountdownTimer = new CountDownTimer(millisUntilFinished, countDownInterval) {
             public void onTick(long millisUntilFinished) {
                 handleOnTick(millisUntilFinished);
             }
             // finished
             public void onFinish() {
                 unlockAndFinish();
-                sendDoneNotification();
             }
         }.start();
     }
@@ -219,12 +183,16 @@ public class PersistActivity extends FragmentActivity {
         updateNotification();
     }
 
-    private void unlockAndFinish() {
-        timeLeftTitle.setText(getString(R.string.persist_text_on_finish));
+    private void stopCountdownAndSendDoneNotification() {
+        mCountdownTimer.cancel();
         millsLeft = 0;
-
         stopPersistService();
+        sendDoneNotification();
+    }
 
+    private void unlockAndFinish() {
+        stopCountdownAndSendDoneNotification();
+        timeLeftTitle.setText(getString(R.string.persist_text_on_finish));
         // bring user back to main screen
         Intent mainActivity = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(mainActivity);
