@@ -26,7 +26,7 @@
         </activity>
         <service android:name=".PersistService"
             android:enabled="true"/>
-        <service android:name=".WhiteListService"
+        <service android:name=".ListenerService"
             android:enabled="true"/>
         <receiver
             android:name=".BootReceiver"

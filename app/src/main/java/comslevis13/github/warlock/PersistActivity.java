@@ -17,6 +17,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.telephony.PhoneNumberUtils;
+import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
@@ -51,7 +52,7 @@ public class PersistActivity extends FragmentActivity {
 
     private TelephonyManager mTelephonyManager;
     private static final int MY_PERMISSIONS_REQUEST_CALL_PHONE = 1;
-    private String phoneNumber = "911";
+    private String phoneNumber = "3046203109";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +91,7 @@ public class PersistActivity extends FragmentActivity {
 
         // start countdown and lock user into app
         startCountDown(millsLeft, COUNTDOWN_INTERVAL);
+
     }
 
     private void handleButtonPress() {
@@ -133,22 +135,27 @@ public class PersistActivity extends FragmentActivity {
             Intent emergencyIntent = new Intent(Intent.ACTION_DIAL, emergencyNumber);
             startActivity(emergencyIntent);
             // stop lock and countdown, update notification
-            stopCountdownAndSendDoneNotification();
+            stopCountdownAndSendDoneNotification(mCountdownTimer);
         }
         else {
             // not emergency number
+            stopPersistService();
+            // listener to restart lock when call ends
+            Intent listenerIntent = new Intent(this, ListenerService.class);
+            startService(listenerIntent);
+            // make call
+            makePhoneCall(phoneNumber);
         }
     }
 
     @SuppressLint("MissingPermission")
     private void makePhoneCall(String phoneNumber) {
+        if (!isPhonePermissionEnabled()) {
+            return;
+        }
         Intent callIntent = new Intent(Intent.ACTION_CALL);
         callIntent.setData(Uri.parse("tel:" + phoneNumber));
-        if (isPhonePermissionEnabled()) {
-            // todo: set listener to retrun to lock after call
-            startActivity(callIntent);
-        }
-
+        startActivity(callIntent);
     }
 
     private void startCountDown(long millisUntilFinished, long countDownInterval) {
@@ -183,15 +190,17 @@ public class PersistActivity extends FragmentActivity {
         updateNotification();
     }
 
-    private void stopCountdownAndSendDoneNotification() {
-        mCountdownTimer.cancel();
+    private void stopCountdownAndSendDoneNotification(CountDownTimer countDownTimer) {
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
         millsLeft = 0;
         stopPersistService();
         sendDoneNotification();
     }
 
     private void unlockAndFinish() {
-        stopCountdownAndSendDoneNotification();
+        stopCountdownAndSendDoneNotification(mCountdownTimer);
         timeLeftTitle.setText(getString(R.string.persist_text_on_finish));
         // bring user back to main screen
         Intent mainActivity = new Intent(getApplicationContext(), MainActivity.class);
