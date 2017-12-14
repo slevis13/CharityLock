@@ -1,23 +1,10 @@
 package comslevis13.github.warlock;
 
-import android.app.ActivityManager;
-import android.app.Application;
-import android.app.IntentService;
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
-import android.os.IBinder;
-import android.provider.Settings;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
-import android.telecom.TelecomManager;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-
-import java.util.List;
 
 /**
  * Created by slevi on 12/9/2017.
@@ -29,7 +16,7 @@ public class EndCallListener extends PhoneStateListener {
     private Context mContext;
 
     // retrieve context to make intent calls
-    protected EndCallListener(Context context) {
+    EndCallListener(Context context) {
         mContext = context.getApplicationContext();
     }
 
@@ -52,10 +39,8 @@ public class EndCallListener extends PhoneStateListener {
             if (hasCallBeenMade) {
                 // start lock service
                 Intent persistService = new Intent(mContext, PersistService.class);
+                persistService.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 mContext.startService(persistService);
-                // sop listener
-                Intent listenerService = new Intent(mContext, ListenerService.class);
-                mContext.stopService(listenerService);
             }
             hasCallBeenMade = false;
         }

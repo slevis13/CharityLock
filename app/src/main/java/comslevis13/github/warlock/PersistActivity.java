@@ -88,20 +88,22 @@ public class PersistActivity extends FragmentActivity {
                 handleButtonPress();
             }
         });
+        mTelephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
 
         // start countdown and lock user into app
         startCountDown(millsLeft, COUNTDOWN_INTERVAL);
+        Log.d("persist onCreate", "onCreate -- ya boy");
 
+        Intent listenerIntent = new Intent(this, ListenerService.class);
+        startService(listenerIntent);
     }
 
     private void handleButtonPress() {
-        mTelephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+
+        Log.d("button press", "button press -- ya boy");
         // check that telephony enabled on device
-        if (MainActivity.isTelephonyEnabled(mTelephonyManager)) {
+        if (isTelephonyEnabled(mTelephonyManager)) {
             // check permission; if not granted, request it
-            Log.d("telephony", "telephony enabled -- ya boy");
-            // todo: test handling of emergency calls
-            // todo: set listener to return to activity after call
             // todo: UI to input #
             handlePhoneCall(phoneNumber);
         }
@@ -112,6 +114,17 @@ public class PersistActivity extends FragmentActivity {
                     Toast.LENGTH_LONG).show();
             mDialButton.setOnClickListener(null);
         }
+    }
+
+    private boolean isTelephonyEnabled(TelephonyManager telephonyManager) {
+        if (telephonyManager != null) {
+            if (telephonyManager.getSimState() ==
+                    TelephonyManager.SIM_STATE_READY) {
+                // device has telephony enabled
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean isPhonePermissionEnabled() {
@@ -127,9 +140,10 @@ public class PersistActivity extends FragmentActivity {
     }
 
     private void handlePhoneCall(String phoneNumber) {
+        stopPersistService();
+        // todo: fix bug. might have to do with persistService stopping, not fully cancelling timer task before call intent?
+        // todo: might have to bind service so can
         if (PhoneNumberUtils.isEmergencyNumber(phoneNumber)) {
-            // stop the lock if user dials an emergency number
-            stopPersistService();
             // dial emergency number in dialer
             Uri emergencyNumber = Uri.parse("tel:" + phoneNumber);
             Intent emergencyIntent = new Intent(Intent.ACTION_DIAL, emergencyNumber);
@@ -139,10 +153,8 @@ public class PersistActivity extends FragmentActivity {
         }
         else {
             // not emergency number
-            stopPersistService();
             // listener to restart lock when call ends
-            Intent listenerIntent = new Intent(this, ListenerService.class);
-            startService(listenerIntent);
+
             // make call
             makePhoneCall(phoneNumber);
         }
@@ -201,6 +213,7 @@ public class PersistActivity extends FragmentActivity {
 
     private void unlockAndFinish() {
         stopCountdownAndSendDoneNotification(mCountdownTimer);
+        stopListenerService();
         timeLeftTitle.setText(getString(R.string.persist_text_on_finish));
         // bring user back to main screen
         Intent mainActivity = new Intent(getApplicationContext(), MainActivity.class);
@@ -218,6 +231,12 @@ public class PersistActivity extends FragmentActivity {
         stopService(persistService);
     }
 
+    private void stopListenerService() {
+        Intent listenerService = new Intent(this, ListenerService.class);
+        stopService(listenerService);
+
+    }
+
     private void updateNotification() {
         String notificationMessageString =
                 Long.toString(hrs) + ": " + Long.toString(mins) + ": " + Long.toString(secs);
@@ -232,7 +251,9 @@ public class PersistActivity extends FragmentActivity {
                         .setContentText(notificationMessageString)
                         .setPriority(NotificationCompat.PRIORITY_LOW);
         // fire notification
-        mNotificationManager.notify(001, mBuilder.build());
+        if (mNotificationManager != null) {
+            mNotificationManager.notify(001, mBuilder.build());
+        }
     }
 
     private void sendDoneNotification() {
@@ -247,7 +268,9 @@ public class PersistActivity extends FragmentActivity {
                         .setContentText(doneNotificationMessage)
                         .setPriority(NotificationCompat.PRIORITY_DEFAULT);
 
-        mNotificationManager.notify(001, mBuilder.build());
+        if (mNotificationManager != null) {
+            mNotificationManager.notify(001, mBuilder.build());
+        }
     }
 
     @Override
@@ -257,8 +280,13 @@ public class PersistActivity extends FragmentActivity {
 
     @Override
     protected void onPause() {
-        storeTimesInSharedPreferences();
         super.onPause();
+        storeTimesInSharedPreferences();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     // update sharedPreferences with timeLeft and currentTime, in milliseconds
@@ -285,10 +313,12 @@ public class PersistActivity extends FragmentActivity {
 
     @Override
     protected void onDestroy() {
-        // stop persistService
-        Intent persistService = new Intent(getApplicationContext(), PersistService.class);
-        stopService(persistService);
-
         super.onDestroy();
+        // stop persistService
+//        stopPersistService();
+//        Intent stopListenerService = new Intent(this, ListenerService.class);
+//        stopService(stopListenerService);
+        Log.d("persist onDestroy", "onDestroy -- ya boy");
+
     }
 }

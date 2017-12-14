@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    protected static boolean isTelephonyEnabled(TelephonyManager telephonyManager) {
+    private boolean isTelephonyEnabled(TelephonyManager telephonyManager) {
         if (telephonyManager != null) {
             if (telephonyManager.getSimState() ==
                     TelephonyManager.SIM_STATE_READY) {
@@ -107,14 +107,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean isPhonePermissionEnabled() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) !=
-                PackageManager.PERMISSION_GRANTED) {
-            // permission not yet granted
-            return false;
-        }
-        else {
-            return true;
-        }
+        return ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE)
+                == PackageManager.PERMISSION_GRANTED;
     }
 
     @Override
@@ -127,7 +121,6 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 // permission denied
             }
-            return;
         }
     }
 
@@ -172,8 +165,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private long hoursAndMinutesToMilliseconds(int hoursArg, int minutesArg) {
-        long mills = (long) (hoursArg * 3600000) + (minutesArg * 60000);
-        return mills;
+        return (long) (hoursArg * 3600000) + (minutesArg * 60000);
     }
 
     // callbacks for dialog button clicks
