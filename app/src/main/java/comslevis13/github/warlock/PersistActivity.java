@@ -3,6 +3,7 @@ package comslevis13.github.warlock;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
@@ -78,6 +79,14 @@ public class PersistActivity extends FragmentActivity
     public void onButtonPressed(int flag) {
         //
         Toast.makeText(this, "got em", Toast.LENGTH_LONG).show();
+        PhoneNumberAndButtonFragment phoneInputFragment = new PhoneNumberAndButtonFragment();
+        android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+        transaction.replace(R.id.frameLayoutForCallElements, phoneInputFragment);
+//        transaction.addToBackStack(null);
+
+        transaction.commit();
+
     }
 
 
