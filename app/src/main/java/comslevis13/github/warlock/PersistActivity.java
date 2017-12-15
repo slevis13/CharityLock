@@ -30,11 +30,11 @@ import android.widget.Toast;
  * Created by slevi on 11/27/2017.
  */
 
-public class PersistActivity extends Activity {
+public class PersistActivity extends FragmentActivity
+        implements MakeCallButtonFragment.OnButtonPressedListener{
 
     private static final int MY_PERMISSIONS_REQUEST_CALL_PHONE = 1;
     private String phoneNumber = "3046203109";
-    protected Button mDialButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,13 +42,22 @@ public class PersistActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.persist_activity);
 
-        mDialButton = (Button) findViewById(R.id.button);
-        mDialButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                handleButtonPress();
+        if (findViewById(R.id.frameLayoutForCallElements) != null) {
+            if (savedInstanceState == null) {
+                MakeCallButtonFragment buttonFragment = new MakeCallButtonFragment();
+                // Add the fragment to the 'fragment_container' FrameLayout
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.frameLayoutForCallElements, buttonFragment).commit();
             }
-        });
+        }
+
+//        mDialButton = (Button) findViewById(R.id.button);
+//        mDialButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+////                handleButtonPress();
+//            }
+//        });
 //        mTelephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
 
         // start countdown and lock user into app
@@ -57,6 +66,18 @@ public class PersistActivity extends Activity {
 
 //        Intent listenerIntent = new Intent(this, ListenerService.class);
 //        startService(listenerIntent);
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        // disable back button
+    }
+
+    @Override
+    public void onButtonPressed(int flag) {
+        //
+        Toast.makeText(this, "got em", Toast.LENGTH_LONG).show();
     }
 
 
@@ -200,10 +221,7 @@ public class PersistActivity extends Activity {
 //        }
 //    }
 //
-    @Override
-    public void onBackPressed() {
-        // disable back button
-    }
+
 //
 //    @Override
 //    protected void onPause() {

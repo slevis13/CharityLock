@@ -33,7 +33,6 @@ public class PersistBaseFragment extends Fragment {
     protected TextView minutesLeftTextView;
     protected TextView secondsLeftTextView;
     protected TextView timeLeftTitle;
-    protected Button mDialButton;
 
     protected long hrs;
     protected long mins;
@@ -67,17 +66,19 @@ public class PersistBaseFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.persist_base_fragment, container, false);
+        View fragmentView = inflater.inflate(
+                R.layout.persist_base_fragment, container, false);
+        hoursLeftTextView = (TextView) fragmentView.findViewById(R.id.text_view_hours_left_persist);
+        minutesLeftTextView = (TextView) fragmentView.findViewById(R.id.text_view_minutes_left_persist);
+        secondsLeftTextView = (TextView) fragmentView.findViewById(R.id.text_view_seconds_left_persist);
+        timeLeftTitle = (TextView) fragmentView.findViewById(R.id.time_left_title);
+
+        return fragmentView;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        hoursLeftTextView = (TextView) getView().findViewById(R.id.text_view_hours_left_persist);
-        minutesLeftTextView = (TextView) getView().findViewById(R.id.text_view_minutes_left_persist);
-        secondsLeftTextView = (TextView) getView().findViewById(R.id.text_view_seconds_left_persist);
-        timeLeftTitle = (TextView) getView().findViewById(R.id.time_left_title);
     }
 
     private void startCountDown(long millisUntilFinished, long countDownInterval) {
