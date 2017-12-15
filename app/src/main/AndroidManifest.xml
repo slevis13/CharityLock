@@ -24,6 +24,9 @@
             android:name=".PersistActivity"
             android:parentActivityName=".MainActivity">
         </activity>
+        <activity android:name=".PersistCallActivity"
+            android:parentActivityName=".PersistActivity">
+        </activity>
         <service android:name=".PersistService"
             android:enabled="true"/>
         <service android:name=".ListenerService"

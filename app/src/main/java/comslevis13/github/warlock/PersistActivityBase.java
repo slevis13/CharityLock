@@ -1,101 +1,75 @@
 package comslevis13.github.warlock;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.ContextCompat;
-import android.telephony.PhoneNumberUtils;
-import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 /**
- * Created by slevi on 11/27/2017.
+ * Created by slevi on 12/14/2017.
  */
 
-public class PersistActivity extends Activity {
+public abstract class PersistActivityBase extends Activity {
 
-    private static final int MY_PERMISSIONS_REQUEST_CALL_PHONE = 1;
-    private String phoneNumber = "3046203109";
+    protected int COUNTDOWN_INTERVAL = 100;
+    protected long MILLISECONDS_IN_HOUR = 3600000;
+    protected long MILLISECONDS_IN_MINUTE = 60000;
+    protected long MILLISECONDS_IN_SECOND = 1000;
+
+    protected TextView hoursLeftTextView;
+    protected TextView minutesLeftTextView;
+    protected TextView secondsLeftTextView;
+    protected TextView timeLeftTitle;
     protected Button mDialButton;
 
+    protected long hrs;
+    protected long mins;
+    protected long secs;
+    protected long millsLeft;
+    protected CountDownTimer mCountdownTimer;
+
+    protected TelephonyManager mTelephonyManager;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.persist_activity);
+        setContentView(getLayoutResourceId());
 
-        mDialButton = (Button) findViewById(R.id.button);
-        mDialButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-//                handleButtonPress();
-            }
-        });
+//        if (savedInstanceState == null) {
+//            // get passed-in timeToLock from intent
+//            Intent intent = getIntent();
+//            millsLeft = intent.getLongExtra(getString(R.string.dialog_intent_mills), 0);
+//        } else {
+//            // restore time left
+//            long mSavedTimeInMilliseconds = savedInstanceState.getLong(
+//                    getString(R.string.persist_mills_current_save_key));
+//            long mSavedMillsLeft = savedInstanceState.getLong(
+//                    getString(R.string.persist_mills_left_save_key));
+//            long currentTimeInMilliseconds = System.currentTimeMillis();
+//
+//            millsLeft = mSavedMillsLeft - (currentTimeInMilliseconds - mSavedTimeInMilliseconds);
+//        }
+//
+//        hoursLeftTextView = (TextView) findViewById(R.id.text_view_hours_left_persist);
+//        minutesLeftTextView = (TextView) findViewById(R.id.text_view_minutes_left_persist);
+//        secondsLeftTextView = (TextView) findViewById(R.id.text_view_seconds_left_persist);
+//        timeLeftTitle = (TextView) findViewById(R.id.time_left_title);
+//
 //        mTelephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-
-        // start countdown and lock user into app
+//
 //        startCountDown(millsLeft, COUNTDOWN_INTERVAL);
-        Log.d("persist onCreate", "onCreate -- ya boy");
-
-//        Intent listenerIntent = new Intent(this, ListenerService.class);
-//        startService(listenerIntent);
     }
 
-
-
-//    @Override
-//    protected int getLayoutResourceId() {
-//        return R.layout.persist_activity;
-//    }
-
-//    private void handleButtonPress() {
-//
-//        // todo: launch new activity with altered layout
-//        // check that telephony enabled on device
-//        if (isTelephonyEnabled(mTelephonyManager)) {
-//            // check permission; if not granted, request it
-//            Log.d("button press", "button press -- ya boy");
-//            stopPersistService();
-//            Intent intent = new Intent(this, PersistCallActivity.class);
-//            startActivity(intent);
-//        }
-//        // if telephony disabled, disable call button
-//        else {
-//            Log.d("telephony", "telephony not enabled -- ya boy");
-//            Toast.makeText(this, "Unable to make calls on this device",
-//                    Toast.LENGTH_LONG).show();
-//            mDialButton.setOnClickListener(null);
-//        }
-//    }
-//
-//    private boolean isTelephonyEnabled(TelephonyManager telephonyManager) {
-//        if (telephonyManager != null) {
-//            if (telephonyManager.getSimState() ==
-//                    TelephonyManager.SIM_STATE_READY) {
-//                // device has telephony enabled
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
+    protected abstract int getLayoutResourceId();
 
 //    private void startCountDown(long millisUntilFinished, long countDownInterval) {
 //        // launch persist service
@@ -199,11 +173,11 @@ public class PersistActivity extends Activity {
 //            mNotificationManager.notify(001, mBuilder.build());
 //        }
 //    }
-//
-    @Override
-    public void onBackPressed() {
-        // disable back button
-    }
+
+//    @Override
+//    public void onBackPressed() {
+//        // disable back button
+//    }
 //
 //    @Override
 //    protected void onPause() {
@@ -248,4 +222,5 @@ public class PersistActivity extends Activity {
 //        Log.d("persist onDestroy", "onDestroy -- ya boy");
 //
 //    }
+
 }
