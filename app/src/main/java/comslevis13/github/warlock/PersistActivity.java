@@ -52,23 +52,7 @@ public class PersistActivity extends FragmentActivity
                         .add(R.id.frameLayoutForCallElements, buttonFragment).commit();
             }
         }
-
-//        mDialButton = (Button) findViewById(R.id.button);
-//        mDialButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-////                handleButtonPress();
-//            }
-//        });
-//        mTelephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-
-        // start countdown and lock user into app
-//        startCountDown(millsLeft, COUNTDOWN_INTERVAL);
         Log.d("persist onCreate", "onCreate -- ya boy");
-
-//        Intent listenerIntent = new Intent(this, ListenerService.class);
-//        startService(listenerIntent);
-
     }
 
     @Override
@@ -80,10 +64,11 @@ public class PersistActivity extends FragmentActivity
     public void onDialButtonPressed(int flag) {
         //
         PhoneNumberAndButtonFragment phoneInputFragment = new PhoneNumberAndButtonFragment();
-        android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        android.support.v4.app.FragmentTransaction transaction =
+                getSupportFragmentManager().beginTransaction();
 
         transaction.replace(R.id.frameLayoutForCallElements, phoneInputFragment);
-        transaction.addToBackStack(null);
+        //transaction.addToBackStack(null);
 
         transaction.commit();
 
@@ -98,112 +83,19 @@ public class PersistActivity extends FragmentActivity
         }
         else if (flag == 010) {
             //
+            MakeCallButtonFragment buttonFragment = new MakeCallButtonFragment();
+            android.support.v4.app.FragmentTransaction transaction =
+                    getSupportFragmentManager().beginTransaction();
+
+            transaction.replace(R.id.frameLayoutForCallElements, buttonFragment);
+            //transaction.addToBackStack(null);
+
+            transaction.commit();
         }
     }
 
 
-//    @Override
-//    protected int getLayoutResourceId() {
-//        return R.layout.persist_activity;
-//    }
 
-//    private void handleButtonPress() {
-//
-//        // todo: launch new activity with altered layout
-//        // check that telephony enabled on device
-//        if (isTelephonyEnabled(mTelephonyManager)) {
-//            // check permission; if not granted, request it
-//            Log.d("button press", "button press -- ya boy");
-//            stopPersistService();
-//            Intent intent = new Intent(this, PersistCallActivity.class);
-//            startActivity(intent);
-//        }
-//        // if telephony disabled, disable call button
-//        else {
-//            Log.d("telephony", "telephony not enabled -- ya boy");
-//            Toast.makeText(this, "Unable to make calls on this device",
-//                    Toast.LENGTH_LONG).show();
-//            mDialButton.setOnClickListener(null);
-//        }
-//    }
-//
-//    private boolean isTelephonyEnabled(TelephonyManager telephonyManager) {
-//        if (telephonyManager != null) {
-//            if (telephonyManager.getSimState() ==
-//                    TelephonyManager.SIM_STATE_READY) {
-//                // device has telephony enabled
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-
-//    private void startCountDown(long millisUntilFinished, long countDownInterval) {
-//        // launch persist service
-//        startPersistService();
-//        // launch countdown, display time
-//        mCountdownTimer = new CountDownTimer(millisUntilFinished, countDownInterval) {
-//            public void onTick(long millisUntilFinished) {
-//                handleOnTick(millisUntilFinished);
-//            }
-//            // finished
-//            public void onFinish() {
-//                unlockAndFinish();
-//            }
-//        }.start();
-//    }
-//
-//    private void handleOnTick(long milliseconds) {
-//        // generate values for time left
-//        hrs = milliseconds / MILLISECONDS_IN_HOUR;
-//        mins = (milliseconds % MILLISECONDS_IN_HOUR) / MILLISECONDS_IN_MINUTE;
-//        secs = ((milliseconds % MILLISECONDS_IN_HOUR)
-//                % MILLISECONDS_IN_MINUTE) / MILLISECONDS_IN_SECOND;
-//        // display values
-//        hoursLeftTextView.setText(Long.toString(hrs));
-//        minutesLeftTextView.setText(Long.toString(mins));
-//        secondsLeftTextView.setText(Long.toString(secs));
-//
-//        // update global variable
-//        millsLeft = milliseconds;
-//
-//        updateNotification();
-//    }
-//
-//    protected void stopCountdownAndSendDoneNotification(CountDownTimer countDownTimer) {
-//        if (countDownTimer != null) {
-//            countDownTimer.cancel();
-//        }
-//        millsLeft = 0;
-//        stopPersistService();
-//        sendDoneNotification();
-//    }
-//
-//    private void unlockAndFinish() {
-//        stopCountdownAndSendDoneNotification(mCountdownTimer);
-//        stopListenerService();
-//        timeLeftTitle.setText(getString(R.string.persist_text_on_finish));
-//        // bring user back to main screen
-//        Intent mainActivity = new Intent(this, MainActivity.class);
-//        startActivity(mainActivity);
-//        finish();
-//    }
-//
-//    private void startPersistService() {
-//        Intent persistService = new Intent(this, PersistService.class);
-//        startService(persistService);
-//    }
-//    protected void stopPersistService() {
-//        // stop PersistService (i.e. unlock user from app)
-//        Intent persistService = new Intent(this, PersistService.class);
-//        stopService(persistService);
-//    }
-//
-//    private void stopListenerService() {
-//        Intent listenerService = new Intent(this, ListenerService.class);
-//        stopService(listenerService);
-//
-//    }
 //
 //    private void updateNotification() {
 //        String notificationMessageString =
@@ -254,36 +146,4 @@ public class PersistActivity extends FragmentActivity
 //        super.onResume();
 //    }
 //
-//    // update sharedPreferences with timeLeft and currentTime, in milliseconds
-//    private void storeTimesInSharedPreferences() {
-//        SharedPreferences settings = getSharedPreferences(
-//                getString(R.string.shared_prefs_file_name), 0);
-//        SharedPreferences.Editor editor = settings.edit();
-//        editor.putLong(getString(R.string.shared_prefs_milliseconds_saved), millsLeft);
-//        editor.putLong(getString(R.string.shared_prefs_time_at_shutdown),
-//                System.currentTimeMillis());
-//
-//        editor.apply();
-//    }
-//
-//    @Override
-//    protected void onSaveInstanceState(Bundle outState) {
-//        // save mills left and current time in mills
-//        outState.putLong(getString(R.string.persist_mills_left_save_key), millsLeft);
-//        outState.putLong(getString(R.string.persist_mills_current_save_key),
-//                System.currentTimeMillis());
-//
-//        super.onSaveInstanceState(outState);
-//    }
-//
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//        // stop persistService
-////        stopPersistService();
-////        Intent stopListenerService = new Intent(this, ListenerService.class);
-////        stopService(stopListenerService);
-//        Log.d("persist onDestroy", "onDestroy -- ya boy");
-//
-//    }
 }
