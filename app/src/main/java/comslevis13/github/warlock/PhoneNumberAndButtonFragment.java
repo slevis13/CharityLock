@@ -22,6 +22,9 @@ import android.widget.Toast;
  * Created by slevi on 12/15/2017.
  */
 
+
+// todo: make back button to get out of input fragment
+
 public class PhoneNumberAndButtonFragment extends Fragment {
 
     private Button mCallButton;
@@ -95,13 +98,16 @@ public class PhoneNumberAndButtonFragment extends Fragment {
             // non-emergency number
             if(!PhoneNumberUtils.isGlobalPhoneNumber(phoneNumber)) {
                 Toast.makeText(getActivity(),
-                        "Invalid phone number!", Toast.LENGTH_SHORT).show();
+                        "Input valid phone number", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if(!isPhonePermissionEnabled()) {
+                Toast.makeText(getActivity(),
+                        "Phone permission not enabled", Toast.LENGTH_SHORT).show();
                 return;
             }
             mCallback.onCallButtonPressed(010);
-            // stop persist
-            Intent stopPersist = new Intent(getActivity(), PersistService.class);
-            getActivity().stopService(stopPersist);
+            stopPersistService();
             // start call listener
             Intent listenerIntent = new Intent(getActivity(), ListenerService.class);
             getActivity().startService(listenerIntent);

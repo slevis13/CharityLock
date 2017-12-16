@@ -35,9 +35,6 @@ public class PersistActivity extends FragmentActivity
         implements MakeCallButtonFragment.OnDialButtonPressedListener,
         PhoneNumberAndButtonFragment.OnCallButtonPressedListener{
 
-    private static final int MY_PERMISSIONS_REQUEST_CALL_PHONE = 1;
-    private String phoneNumber = "3046203109";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -132,18 +129,5 @@ public class PersistActivity extends FragmentActivity
 //            mNotificationManager.notify(001, mBuilder.build());
 //        }
 //    }
-//
 
-//
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        storeTimesInSharedPreferences();
-//    }
-//
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//    }
-//
 }

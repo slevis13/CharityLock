@@ -33,7 +33,7 @@ public class ListenerService extends Service {
         }
     }
 
-    public TelephonyManager getmTelephonyManager() {
+    protected TelephonyManager getmTelephonyManager() {
         return mTelephonyManager;
     }
 
@@ -44,8 +44,6 @@ public class ListenerService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-//        mTelephonyManager.listen(mCallListener, PhoneStateListener.LISTEN_NONE);
-//        stopSelf();
     }
 
     @Nullable
