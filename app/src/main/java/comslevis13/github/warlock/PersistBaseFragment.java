@@ -22,7 +22,7 @@ import static android.content.Context.TELEPHONY_SERVICE;
  * Created by slevi on 12/14/2017.
  */
 
-public class PersistBaseFragment extends Fragment {
+public class PersistBaseFragment extends android.support.v4.app.Fragment {
 
     protected int COUNTDOWN_INTERVAL = 100;
     protected long MILLISECONDS_IN_HOUR = 3600000;
@@ -113,17 +113,17 @@ public class PersistBaseFragment extends Fragment {
         updateNotification();
     }
 
-    protected void stopCountdownAndSendDoneNotification(CountDownTimer countDownTimer) {
-        if (countDownTimer != null) {
-            countDownTimer.cancel();
+    protected void stopCountdownAndSendDoneNotification() {
+        if (mCountdownTimer != null) {
+            mCountdownTimer.cancel();
         }
         millsLeft = 0;
         stopPersistService();
         sendDoneNotification();
     }
 
-    private void unlockAndFinish() {
-        stopCountdownAndSendDoneNotification(mCountdownTimer);
+    protected void unlockAndFinish() {
+        stopCountdownAndSendDoneNotification();
         stopListenerService();
         timeLeftTitle.setText(getString(R.string.persist_text_on_finish));
         // bring user back to main screen

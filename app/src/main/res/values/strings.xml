@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Warlock</string>
 
+    <!-- MainActivity -->
     <string name="lock_button">Lock</string>
     <string name="confirm_dialog_yes">Lock it!</string>
     <string name="confirm_dialog_cancel">Cancel</string>
@@ -11,6 +12,7 @@
     <string name="hour_picker_save_key">savedInstanceState for hourPicker</string>
     <string name="minute_picker_save_key">savedInstanceState for minutePicker</string>
 
+    <!-- DialogConfirm -->
     <string name="dialog_intent_hours">hours_to_lock</string>
     <string name="dialog_intent_minutes">minutes_to_lock</string>
     <string name="dialog_intent_mills">mills_to_lock</string>
@@ -19,6 +21,7 @@
     <string name="dialog_confirm_message">
         You will be fully locked out of your phone for</string>
 
+    <!-- PersistActivity/Service -->
     <string name="persist_time_left">Locked</string>
     <string name="persist_mills_current_save_key">savedInstanceState for current time in milliseconds</string>
     <string name="persist_mills_left_save_key">savedInstanceState for mills left</string>
@@ -28,7 +31,14 @@
     <string name="shared_prefs_file_name">sharedPreferences file for time left</string>
     <string name="shared_prefs_time_at_shutdown">sharedPreferences time at shutdown in ms</string>
 
+    <!-- notification -->
     <string name="notification_title">Locked</string>
     <string name="notification_message">Time left: </string>
+
+    <!-- -->
+    <string name="phone_input_call_button">Call</string>
+    <string name="phone_dial_button">Dial</string>
+
+
 
 </resources>

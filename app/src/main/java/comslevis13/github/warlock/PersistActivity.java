@@ -32,7 +32,8 @@ import android.widget.Toast;
  */
 
 public class PersistActivity extends FragmentActivity
-        implements MakeCallButtonFragment.OnButtonPressedListener{
+        implements MakeCallButtonFragment.OnDialButtonPressedListener,
+        PhoneNumberAndButtonFragment.OnCallButtonPressedListener{
 
     private static final int MY_PERMISSIONS_REQUEST_CALL_PHONE = 1;
     private String phoneNumber = "3046203109";
@@ -76,7 +77,7 @@ public class PersistActivity extends FragmentActivity
     }
 
     @Override
-    public void onButtonPressed(int flag) {
+    public void onDialButtonPressed(int flag) {
         //
         Toast.makeText(this, "got em", Toast.LENGTH_LONG).show();
         PhoneNumberAndButtonFragment phoneInputFragment = new PhoneNumberAndButtonFragment();
@@ -89,6 +90,15 @@ public class PersistActivity extends FragmentActivity
 
     }
 
+    @Override
+    public void onCallButtonPressed(int flag) {
+        Toast.makeText(this, "got em", Toast.LENGTH_LONG).show();
+        if (flag == 100) {
+            PersistBaseFragment mainFragment = (PersistBaseFragment)
+                    getSupportFragmentManager().findFragmentById(R.id.persistBaseFragment);
+            mainFragment.stopCountdownAndSendDoneNotification();
+        }
+    }
 
 
 //    @Override

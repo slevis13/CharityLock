@@ -3,12 +3,18 @@ package comslevis13.github.warlock;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
+
+import static android.content.Context.TELEPHONY_SERVICE;
 
 /**
  * Created by slevi on 12/15/2017.
@@ -17,11 +23,13 @@ import android.widget.Button;
 public class MakeCallButtonFragment extends android.support.v4.app.Fragment {
 
     protected Button mDialButton;
-    public OnButtonPressedListener mCallback;
+    protected OnDialButtonPressedListener mCallback;
+    private TelephonyManager mTelephonyManager;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mTelephonyManager = (TelephonyManager) getActivity().getSystemService(TELEPHONY_SERVICE);
     }
 
     @Nullable
@@ -34,7 +42,8 @@ public class MakeCallButtonFragment extends android.support.v4.app.Fragment {
         mDialButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mCallback.onButtonPressed(001);
+                handleButtonPress();
+//                mCallback.onDialButtonPressed(001);
             }
         });
         return fragmentView;
@@ -45,11 +54,9 @@ public class MakeCallButtonFragment extends android.support.v4.app.Fragment {
         super.onViewCreated(view, savedInstanceState);
     }
 
-
-
     // Container Activity must implement this interface
-    public interface OnButtonPressedListener {
-        public void onButtonPressed(int flag);
+    public interface OnDialButtonPressedListener {
+        public void onDialButtonPressed(int flag);
     }
 
     @Override
@@ -59,10 +66,40 @@ public class MakeCallButtonFragment extends android.support.v4.app.Fragment {
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
         try {
-            mCallback = (OnButtonPressedListener) getActivity();
+            mCallback = (OnDialButtonPressedListener) getActivity();
         } catch (ClassCastException e) {
             throw new ClassCastException(getActivity().toString()
-                    + " must implement OnHeadlineSelectedListener");
+                    + " must implement OnDialButtonPressedListener");
         }
+    }
+
+    private void handleButtonPress() {
+        // check that telephony enabled on device
+        if (isTelephonyEnabled(mTelephonyManager)) {
+            // check permission; if not granted, request it
+            Log.d("button press", "button press -- ya boy");
+//            stopPersistService();
+//            Intent intent = new Intent(this, PersistCallActivity.class);
+//            startActivity(intent);
+            mCallback.onDialButtonPressed(001);
+        }
+        // if telephony disabled, disable call button
+        else {
+            Log.d("telephony", "telephony not enabled -- ya boy");
+            Toast.makeText(getActivity(), "Unable to make calls on this device",
+                    Toast.LENGTH_LONG).show();
+            mDialButton.setOnClickListener(null);
+        }
+    }
+
+    private boolean isTelephonyEnabled(TelephonyManager telephonyManager) {
+        if (telephonyManager != null) {
+            if (telephonyManager.getSimState() ==
+                    TelephonyManager.SIM_STATE_READY) {
+                // device has telephony enabled
+                return true;
+            }
+        }
+        return false;
     }
 }
