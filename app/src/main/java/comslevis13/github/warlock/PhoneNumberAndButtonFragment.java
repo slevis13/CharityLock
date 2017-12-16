@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 /**
  * Created by slevi on 12/15/2017.
@@ -92,6 +93,22 @@ public class PhoneNumberAndButtonFragment extends Fragment {
         }
         else {
             // non-emergency number
+            if(!PhoneNumberUtils.isGlobalPhoneNumber(phoneNumber)) {
+                Toast.makeText(getActivity(),
+                        "Invalid phone number!", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            mCallback.onCallButtonPressed(010);
+            // stop persist
+            Intent stopPersist = new Intent(getActivity(), PersistService.class);
+            getActivity().stopService(stopPersist);
+            // start call listener
+            Intent listenerIntent = new Intent(getActivity(), ListenerService.class);
+            getActivity().startService(listenerIntent);
+            // make call
+            Intent makeCall = new Intent(Intent.ACTION_CALL);
+            makeCall.setData(Uri.parse("tel:" + phoneNumber));
+            startActivity(makeCall);
         }
     }
 

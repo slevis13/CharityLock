@@ -79,12 +79,11 @@ public class PersistActivity extends FragmentActivity
     @Override
     public void onDialButtonPressed(int flag) {
         //
-        Toast.makeText(this, "got em", Toast.LENGTH_LONG).show();
         PhoneNumberAndButtonFragment phoneInputFragment = new PhoneNumberAndButtonFragment();
         android.support.v4.app.FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
         transaction.replace(R.id.frameLayoutForCallElements, phoneInputFragment);
-//        transaction.addToBackStack(null);
+        transaction.addToBackStack(null);
 
         transaction.commit();
 
@@ -92,11 +91,13 @@ public class PersistActivity extends FragmentActivity
 
     @Override
     public void onCallButtonPressed(int flag) {
-        Toast.makeText(this, "got em", Toast.LENGTH_LONG).show();
         if (flag == 100) {
             PersistBaseFragment mainFragment = (PersistBaseFragment)
                     getSupportFragmentManager().findFragmentById(R.id.persistBaseFragment);
             mainFragment.stopCountdownAndSendDoneNotification();
+        }
+        else if (flag == 010) {
+            //
         }
     }
 

@@ -1,6 +1,6 @@
 package comslevis13.github.warlock;
 
-import android.app.Fragment;
+
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
@@ -9,14 +9,10 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
-import android.telephony.TelephonyManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
-
-import static android.content.Context.TELEPHONY_SERVICE;
 
 /**
  * Created by slevi on 12/14/2017.
@@ -39,8 +35,6 @@ public class PersistBaseFragment extends android.support.v4.app.Fragment {
     protected long secs;
     protected long millsLeft;
     protected CountDownTimer mCountdownTimer;
-
-    protected TelephonyManager mTelephonyManager;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
