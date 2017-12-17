@@ -28,13 +28,18 @@ import android.widget.Toast;
 public class PhoneNumberAndButtonFragment extends Fragment {
 
     private Button mCallButton;
-    private OnCallButtonPressedListener mCallback;
+    private Button mCancelButton;
+    private OnCallButtonPressedListener mCallCallback;
+    private OnCancelButtonPressedListener mCancelCallback;
     private EditText mPhoneNumberInput;
     private TelephonyManager mTelephonyManager;
     private String mPhoneNumberTest = "911";
 
     public interface OnCallButtonPressedListener {
         public void onCallButtonPressed(int flag);
+    }
+    public interface OnCancelButtonPressedListener {
+        void onCancelButtonPressed();
     }
 
 
@@ -45,10 +50,13 @@ public class PhoneNumberAndButtonFragment extends Fragment {
         // This makes sure that the container activity has implemented
         // the callback interface. If not, it throws an exception
         try {
-            mCallback = (PhoneNumberAndButtonFragment.OnCallButtonPressedListener) getActivity();
+            mCallCallback =
+                    (PhoneNumberAndButtonFragment.OnCallButtonPressedListener) getActivity();
+            mCancelCallback =
+                    (PhoneNumberAndButtonFragment.OnCancelButtonPressedListener) getActivity();
         } catch (ClassCastException e) {
             throw new ClassCastException(getActivity().toString()
-                    + " must implement OnCallButtonPressedListener");
+                    + " must implement OnButtonPressedListeners");
         }
     }
 
@@ -65,12 +73,19 @@ public class PhoneNumberAndButtonFragment extends Fragment {
             LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(
                 R.layout.phone_input_and_button, container, false);
+        // set button listeners
         mCallButton = fragmentView.findViewById(R.id.button_dial_and_call);
         mCallButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                mCallback.onCallButtonPressed(001);
                 handleCallButtonPress();
+            }
+        });
+        mCancelButton = fragmentView.findViewById(R.id.button_cancel_call);
+        mCancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mCancelCallback.onCancelButtonPressed();
             }
         });
         mPhoneNumberInput = fragmentView.findViewById(R.id.phone_number_edit_text);
@@ -87,7 +102,7 @@ public class PhoneNumberAndButtonFragment extends Fragment {
         // emergency number
         if (PhoneNumberUtils.isEmergencyNumber(phoneNumber)) {
             // callback flag for emergency number
-            mCallback.onCallButtonPressed(100);
+            mCallCallback.onCallButtonPressed(100);
             // stop app and dial number
             Intent dialIntent = new Intent(Intent.ACTION_DIAL);
             dialIntent.setData(Uri.parse("tel:" + phoneNumber));
@@ -106,7 +121,7 @@ public class PhoneNumberAndButtonFragment extends Fragment {
                         "Phone permission not enabled", Toast.LENGTH_SHORT).show();
                 return;
             }
-            mCallback.onCallButtonPressed(010);
+            mCallCallback.onCallButtonPressed(010);
             stopPersistService();
             // start call listener
             Intent listenerIntent = new Intent(getActivity(), ListenerService.class);
@@ -115,10 +130,17 @@ public class PhoneNumberAndButtonFragment extends Fragment {
             Intent makeCall = new Intent(Intent.ACTION_CALL);
             makeCall.setData(Uri.parse("tel:" + phoneNumber));
             startActivity(makeCall);
+
+            unregisterListeners();
         }
     }
 
-    protected void stopPersistService() {
+    public void unregisterListeners() {
+        mCancelButton.setOnClickListener(null);
+        mCallButton.setOnClickListener(null);
+    }
+
+    private void stopPersistService() {
         // stop PersistService (i.e. unlock user from app)
         Intent persistService = new Intent(getActivity(), PersistService.class);
         getActivity().stopService(persistService);

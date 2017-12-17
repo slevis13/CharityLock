@@ -119,7 +119,9 @@ public class PersistBaseFragment extends android.support.v4.app.Fragment {
     protected void unlockAndFinish() {
         stopCountdownAndSendDoneNotification();
         stopListenerService();
-        timeLeftTitle.setText(getString(R.string.persist_text_on_finish));
+        if (timeLeftTitle != null) {
+            timeLeftTitle.setText(getString(R.string.persist_text_on_finish));
+        }
         // bring user back to main screen
         Intent mainActivity = new Intent(getActivity(), MainActivity.class);
         startActivity(mainActivity);

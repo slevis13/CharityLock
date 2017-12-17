@@ -33,7 +33,8 @@ import android.widget.Toast;
 
 public class PersistActivity extends FragmentActivity
         implements MakeCallButtonFragment.OnDialButtonPressedListener,
-        PhoneNumberAndButtonFragment.OnCallButtonPressedListener{
+        PhoneNumberAndButtonFragment.OnCallButtonPressedListener,
+        PhoneNumberAndButtonFragment.OnCancelButtonPressedListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +67,6 @@ public class PersistActivity extends FragmentActivity
 
         transaction.replace(R.id.frameLayoutForCallElements, phoneInputFragment);
         //transaction.addToBackStack(null);
-
         transaction.commit();
 
     }
@@ -74,23 +74,31 @@ public class PersistActivity extends FragmentActivity
     @Override
     public void onCallButtonPressed(int flag) {
         if (flag == 100) {
+            // emergency number
             PersistBaseFragment mainFragment = (PersistBaseFragment)
                     getSupportFragmentManager().findFragmentById(R.id.persistBaseFragment);
             mainFragment.stopCountdownAndSendDoneNotification();
         }
         else if (flag == 010) {
-            //
-            MakeCallButtonFragment buttonFragment = new MakeCallButtonFragment();
-            android.support.v4.app.FragmentTransaction transaction =
-                    getSupportFragmentManager().beginTransaction();
-
-            transaction.replace(R.id.frameLayoutForCallElements, buttonFragment);
-            //transaction.addToBackStack(null);
-
-            transaction.commit();
+            // non-emergency number
+            buttonFragmentReplace();
         }
     }
 
+    @Override
+    public void onCancelButtonPressed() {
+        buttonFragmentReplace();
+    }
+
+    private void buttonFragmentReplace() {
+        MakeCallButtonFragment buttonFragment = new MakeCallButtonFragment();
+        android.support.v4.app.FragmentTransaction transaction =
+                getSupportFragmentManager().beginTransaction();
+
+        transaction.replace(R.id.frameLayoutForCallElements, buttonFragment);
+        //transaction.addToBackStack(null);
+        transaction.commit();
+    }
 
 
 //
