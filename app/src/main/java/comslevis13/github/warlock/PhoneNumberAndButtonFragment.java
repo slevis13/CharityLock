@@ -162,10 +162,8 @@ public class PhoneNumberAndButtonFragment extends Fragment {
     }
 
     private boolean isTelephonyEnabled(TelephonyManager telephonyManager) {
-        if (telephonyManager != null) {
-            return telephonyManager.getSimState() == TelephonyManager.SIM_STATE_READY;
-        }
-        return false;
+        return telephonyManager != null &&
+                telephonyManager.getSimState() == TelephonyManager.SIM_STATE_READY;
     }
 
 

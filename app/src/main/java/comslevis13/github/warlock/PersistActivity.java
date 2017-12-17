@@ -60,10 +60,8 @@ public class PersistActivity extends FragmentActivity
     private boolean isDeviceAPhone() {
         TelephonyManager telephonyManager =
                 (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        if (telephonyManager != null) {
-            return telephonyManager.getPhoneType() != TelephonyManager.PHONE_TYPE_NONE;
-        }
-        return false;
+        return telephonyManager != null &&
+                telephonyManager.getPhoneType() != TelephonyManager.PHONE_TYPE_NONE;
     }
 
     @Override
@@ -112,43 +110,4 @@ public class PersistActivity extends FragmentActivity
         //transaction.addToBackStack(null);
         transaction.commit();
     }
-
-
-//
-//    private void updateNotification() {
-//        String notificationMessageString =
-//                Long.toString(hrs) + ": " + Long.toString(mins) + ": " + Long.toString(secs);
-//
-//        NotificationManager mNotificationManager =
-//                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-//        // get notification object
-//        NotificationCompat.Builder mBuilder =
-//                new NotificationCompat.Builder(this)
-//                        .setSmallIcon(R.drawable.notification_icon)
-//                        .setContentTitle(getString(R.string.notification_title))
-//                        .setContentText(notificationMessageString)
-//                        .setPriority(NotificationCompat.PRIORITY_LOW);
-//        // fire notification
-//        if (mNotificationManager != null) {
-//            mNotificationManager.notify(001, mBuilder.build());
-//        }
-//    }
-//
-//    private void sendDoneNotification() {
-//        String doneNotificationMessage = "Done!";
-//        NotificationManager mNotificationManager =
-//                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-//
-//        NotificationCompat.Builder mBuilder =
-//                new NotificationCompat.Builder(this)
-//                        .setSmallIcon(R.drawable.notification_icon_unlock)
-//                        .setContentTitle("Unlocked")
-//                        .setContentText(doneNotificationMessage)
-//                        .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-//
-//        if (mNotificationManager != null) {
-//            mNotificationManager.notify(001, mBuilder.build());
-//        }
-//    }
-
 }

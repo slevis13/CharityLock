@@ -24,17 +24,12 @@ public class EndCallListener extends PhoneStateListener {
     public void onCallStateChanged(int state, String incomingNumber) {
         if(TelephonyManager.CALL_STATE_RINGING == state) {
             // use this if you want to disable lock for incoming calls as well
-            // todo ?
-            Log.i("call state", "ya boy RINGING, number: " + incomingNumber);
         }
         if(TelephonyManager.CALL_STATE_OFFHOOK == state) {
-            //wait for phone to go offhook (probably set a boolean flag) so you know your app initiated the call.
-            Log.i("call state", "ya boy OFFHOOK");
+            // wait for phone to go offhook
             hasCallBeenMade = true;
         }
         if(TelephonyManager.CALL_STATE_IDLE == state) {
-            //when this state occurs, and your flag is set, restart your app
-            Log.i("call state", "ya boy IDLE");
             // call has ended
             if (hasCallBeenMade) {
                 // start lock service

@@ -77,34 +77,27 @@ public class MainActivity extends AppCompatActivity {
 
     private void checkTelephonyAndPermissions() {
         mTelephonyManager = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
-        // check if telephony enabled on device
-        if (isTelephonyEnabled(mTelephonyManager)) {
-            // check permission; if not granted, request it
-            Log.d("telephony", "telephony enabled -- ya boy");
-            if (isPhonePermissionEnabled()) {
-                getTimeAndLaunchDialog();
-            }
-            else {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.CALL_PHONE},
-                        MY_PERMISSIONS_REQUEST_CALL_PHONE);
-            }
-        }
-        // if telephony not enabled, device cannot make calls anyway; launch lock service
-        else {
+        // if device is a tablet, do not ask for permissions
+        if (!isDeviceAPhone()) {
             getTimeAndLaunchDialog();
+            return;
+        }
+        // check permission; if not granted, request it
+        if (isPhonePermissionEnabled()) {
+            getTimeAndLaunchDialog();
+        }
+        else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CALL_PHONE},
+                    MY_PERMISSIONS_REQUEST_CALL_PHONE);
         }
     }
 
-    private boolean isTelephonyEnabled(TelephonyManager telephonyManager) {
-        if (telephonyManager != null) {
-            if (telephonyManager.getSimState() ==
-                    TelephonyManager.SIM_STATE_READY) {
-                // device has telephony enabled
-                return true;
-            }
-        }
-        return false;
+    private boolean isDeviceAPhone() {
+        TelephonyManager telephonyManager =
+                (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        return telephonyManager != null &&
+                telephonyManager.getPhoneType() != TelephonyManager.PHONE_TYPE_NONE;
     }
 
     private boolean isPhonePermissionEnabled() {
