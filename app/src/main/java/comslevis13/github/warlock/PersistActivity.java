@@ -42,6 +42,10 @@ public class PersistActivity extends FragmentActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.persist_activity);
 
+        if (!isDeviceAPhone()) {
+            // don't show dial button for tablets
+            return;
+        }
         if (findViewById(R.id.frameLayoutForCallElements) != null) {
             if (savedInstanceState == null) {
                 MakeCallButtonFragment buttonFragment = new MakeCallButtonFragment();
@@ -51,6 +55,15 @@ public class PersistActivity extends FragmentActivity
             }
         }
         Log.d("persist onCreate", "onCreate -- ya boy");
+    }
+
+    private boolean isDeviceAPhone() {
+        TelephonyManager telephonyManager =
+                (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        if (telephonyManager != null) {
+            return telephonyManager.getPhoneType() != TelephonyManager.PHONE_TYPE_NONE;
+        }
+        return false;
     }
 
     @Override

@@ -20,7 +20,8 @@
             android:elevation="4dp"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:titleTextColor="@color/electricPurple" />
+            app:titleTextColor="@android:color/white"
+            android:background="@color/warlockBlue"/>
     </android.support.design.widget.AppBarLayout>
 
 
@@ -45,7 +46,7 @@
         android:layout_width="130dp"
         android:layout_height="160dp"
         android:layout_marginTop="8dp"
-        android:solidColor="@color/electricPurple"
+        android:solidColor="@color/warlockBlue"
         app:layout_constraintBottom_toTopOf="@+id/minutes_text_view_main"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -57,7 +58,7 @@
         android:id="@+id/hourPicker"
         android:layout_width="130dp"
         android:layout_height="160dp"
-        android:solidColor="@color/electricPurple"
+        android:solidColor="@color/warlockBlue"
         app:layout_constraintBottom_toBottomOf="@+id/minutePicker"
         app:layout_constraintEnd_toStartOf="@+id/minutePicker"
         app:layout_constraintHorizontal_bias="0.5"

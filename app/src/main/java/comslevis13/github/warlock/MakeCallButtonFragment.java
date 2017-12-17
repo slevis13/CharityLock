@@ -74,32 +74,8 @@ public class MakeCallButtonFragment extends android.support.v4.app.Fragment {
     }
 
     private void handleButtonPress() {
-        // check that telephony enabled on device
-        if (isTelephonyEnabled(mTelephonyManager)) {
-            // check permission; if not granted, request it
-            Log.d("button press", "button press -- ya boy");
-//            stopPersistService();
-//            Intent intent = new Intent(this, PersistCallActivity.class);
-//            startActivity(intent);
-            mCallback.onDialButtonPressed(001);
-        }
-        // if telephony disabled, disable call button
-        else {
-            Log.d("telephony", "telephony not enabled -- ya boy");
-            Toast.makeText(getActivity(), "Unable to make calls on this device",
-                    Toast.LENGTH_LONG).show();
-            mDialButton.setOnClickListener(null);
-        }
+        Log.d("button press", "button press -- ya boy");
+        mCallback.onDialButtonPressed(001);
     }
 
-    private boolean isTelephonyEnabled(TelephonyManager telephonyManager) {
-        if (telephonyManager != null) {
-            if (telephonyManager.getSimState() ==
-                    TelephonyManager.SIM_STATE_READY) {
-                // device has telephony enabled
-                return true;
-            }
-        }
-        return false;
-    }
 }

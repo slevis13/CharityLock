@@ -103,10 +103,7 @@ public class PhoneNumberAndButtonFragment extends Fragment {
         if (PhoneNumberUtils.isEmergencyNumber(phoneNumber)) {
             // callback flag for emergency number
             mCallCallback.onCallButtonPressed(100);
-            // stop app and dial number
-            Intent dialIntent = new Intent(Intent.ACTION_DIAL);
-            dialIntent.setData(Uri.parse("tel:" + phoneNumber));
-            startActivity(dialIntent);
+            doEmergencyCall(phoneNumber);
             getActivity().finish();
         }
         else {
@@ -114,6 +111,12 @@ public class PhoneNumberAndButtonFragment extends Fragment {
             if(!PhoneNumberUtils.isGlobalPhoneNumber(phoneNumber)) {
                 Toast.makeText(getActivity(),
                         "Input valid phone number", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if(!isTelephonyEnabled(mTelephonyManager)) {
+                Toast.makeText(getActivity(),
+                        "This device cannot call non-emergency numbers",
+                        Toast.LENGTH_SHORT).show();
                 return;
             }
             if(!isPhonePermissionEnabled()) {
@@ -135,6 +138,13 @@ public class PhoneNumberAndButtonFragment extends Fragment {
         }
     }
 
+    private void doEmergencyCall(String number) {
+        // dial number
+        Intent dialIntent = new Intent(Intent.ACTION_DIAL);
+        dialIntent.setData(Uri.parse("tel:" + number));
+        startActivity(dialIntent);
+    }
+
     public void unregisterListeners() {
         mCancelButton.setOnClickListener(null);
         mCallButton.setOnClickListener(null);
@@ -150,6 +160,14 @@ public class PhoneNumberAndButtonFragment extends Fragment {
         return ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.CALL_PHONE)
                 == PackageManager.PERMISSION_GRANTED;
     }
+
+    private boolean isTelephonyEnabled(TelephonyManager telephonyManager) {
+        if (telephonyManager != null) {
+            return telephonyManager.getSimState() == TelephonyManager.SIM_STATE_READY;
+        }
+        return false;
+    }
+
 
 
 }
