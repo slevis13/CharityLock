@@ -133,6 +133,7 @@ public class PersistBaseFragment extends android.support.v4.app.Fragment {
         getActivity().startService(persistService);
     }
     protected void stopPersistService() {
+        PersistService.stopPersistTask();
         // stop PersistService (i.e. unlock user from app)
         Intent persistService = new Intent(getActivity(), PersistService.class);
         getActivity().stopService(persistService);

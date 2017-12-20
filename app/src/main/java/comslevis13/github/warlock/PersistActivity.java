@@ -54,7 +54,6 @@ public class PersistActivity extends FragmentActivity
                         .add(R.id.frameLayoutForCallElements, buttonFragment).commit();
             }
         }
-        Log.d("persist onCreate", "onCreate -- ya boy");
     }
 
     private boolean isDeviceAPhone() {

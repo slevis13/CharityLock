@@ -22,6 +22,10 @@ public class PersistService extends Service {
         startPersistRefresh();
     }
 
+    public static void stopPersistTask() {
+        stopTask = true;
+    }
+
     // launches method to continuously refresh activity
     private void startPersistRefresh () {
         // intent to launch PersistActivity

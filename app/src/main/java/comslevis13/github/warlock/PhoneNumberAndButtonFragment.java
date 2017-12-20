@@ -74,21 +74,21 @@ public class PhoneNumberAndButtonFragment extends Fragment {
         View fragmentView = inflater.inflate(
                 R.layout.phone_input_and_button, container, false);
         // set button listeners
-        mCallButton = fragmentView.findViewById(R.id.button_dial_and_call);
+        mCallButton = (Button) fragmentView.findViewById(R.id.button_dial_and_call);
         mCallButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 handleCallButtonPress();
             }
         });
-        mCancelButton = fragmentView.findViewById(R.id.button_cancel_call);
+        mCancelButton = (Button) fragmentView.findViewById(R.id.button_cancel_call);
         mCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 mCancelCallback.onCancelButtonPressed();
             }
         });
-        mPhoneNumberInput = fragmentView.findViewById(R.id.phone_number_edit_text);
+        mPhoneNumberInput = (EditText) fragmentView.findViewById(R.id.phone_number_edit_text);
         return fragmentView;
     }
 
@@ -103,8 +103,9 @@ public class PhoneNumberAndButtonFragment extends Fragment {
         if (PhoneNumberUtils.isEmergencyNumber(phoneNumber)) {
             // callback flag for emergency number
             mCallCallback.onCallButtonPressed(100);
-            doEmergencyCall(phoneNumber);
+
             getActivity().finish();
+            doEmergencyCall(phoneNumber);
         }
         else {
             // non-emergency number
@@ -124,6 +125,7 @@ public class PhoneNumberAndButtonFragment extends Fragment {
                         "Phone permission not enabled", Toast.LENGTH_SHORT).show();
                 return;
             }
+            unregisterListeners();
             mCallCallback.onCallButtonPressed(010);
             stopPersistService();
             // start call listener
@@ -133,8 +135,6 @@ public class PhoneNumberAndButtonFragment extends Fragment {
             Intent makeCall = new Intent(Intent.ACTION_CALL);
             makeCall.setData(Uri.parse("tel:" + phoneNumber));
             startActivity(makeCall);
-
-            unregisterListeners();
         }
     }
 
@@ -151,6 +151,7 @@ public class PhoneNumberAndButtonFragment extends Fragment {
     }
 
     private void stopPersistService() {
+        PersistService.stopPersistTask();
         // stop PersistService (i.e. unlock user from app)
         Intent persistService = new Intent(getActivity(), PersistService.class);
         getActivity().stopService(persistService);

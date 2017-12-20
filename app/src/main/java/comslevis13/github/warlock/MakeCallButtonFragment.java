@@ -38,7 +38,7 @@ public class MakeCallButtonFragment extends android.support.v4.app.Fragment {
             LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(
                 R.layout.phone_call_button, container, false);
-        mDialButton = fragmentView.findViewById(R.id.call_button);
+        mDialButton = (Button) fragmentView.findViewById(R.id.call_button);
         mDialButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -74,7 +74,6 @@ public class MakeCallButtonFragment extends android.support.v4.app.Fragment {
     }
 
     private void handleButtonPress() {
-        Log.d("button press", "button press -- ya boy");
         mCallback.onDialButtonPressed(001);
     }
 
